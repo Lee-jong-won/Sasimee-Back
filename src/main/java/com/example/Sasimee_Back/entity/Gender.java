@@ -12,4 +12,15 @@ public enum Gender {
     Gender(String gender){
         this.gender = gender;
     }
+
+    public static Gender fromString(String value) {
+        if ("male".equalsIgnoreCase(value)) {
+            return M;
+        } else if ("female".equalsIgnoreCase(value)) {
+            return F;
+        } else {
+            throw new IllegalArgumentException("Invalid gender value: " + value);
+        }
+    }
+
 }
