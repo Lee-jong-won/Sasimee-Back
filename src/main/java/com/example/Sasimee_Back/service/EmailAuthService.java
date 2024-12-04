@@ -17,7 +17,7 @@ public class EmailAuthService {
     public void saveVerificationCode(String email, String verificationCode)
     {
         String key = VERIFICATION_CODE_FEY_PREFIX + email;
-        emailVerificationRepository.createRedisData(email, verificationCode);
+        emailVerificationRepository.createRedisData(key, verificationCode);
     }
 
     public void deleteVerificationCode(String email)

@@ -32,10 +32,9 @@ public class User {
 
     public static UserDTO.registerResponse toRegisterResponseDTO(User user)
     {
-        return UserDTO.registerResponse.builder().email(user.getEmail())
-                .name(user.name)
+        return UserDTO.registerResponse.builder()
+                .status(true)
                 .message("회원가입이 성공적으로 완료되었습니다!")
-                .redirectURL("")
                 .build();
     }
 

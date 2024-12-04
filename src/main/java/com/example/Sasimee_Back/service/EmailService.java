@@ -23,7 +23,7 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
     @Async
-    public EmailDTO.SentResponse sendEmailNotice(EmailDTO.SentRequest emailRequest, String type){
+    public EmailDTO.SentResponse sendEmailNotice(EmailDTO.SentRequest emailRequest, String authNum, String type){
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
@@ -31,7 +31,7 @@ public class EmailService {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
             mimeMessageHelper.setTo(emailRequest.getTo()); // 메일 수신자
             mimeMessageHelper.setSubject(emailRequest.getSubject()); // 메일 제목
-            mimeMessageHelper.setText(setContext(EmailAuthService.createdCertifyNum(), "email"), true); // 메일 본문 내용, HTML 여부
+            mimeMessageHelper.setText(setContext(authNum, "email"), true); // 메일 본문 내용, HTML 여부
             javaMailSender.send(mimeMessage);
 
             log.info("Succeeded to send Email");

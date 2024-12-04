@@ -24,14 +24,7 @@ public class UserController {
             @RequestBody UserDTO.registerRequest registerRequest,
             HttpSession session)
     {
-        String loginUser = (String)session.getAttribute("loginUser");
         Boolean isVerified = (boolean)session.getAttribute("emailVerified");
-
-        if(loginUser != null) return ResponseEntity.badRequest().
-                body(UserDTO.registerResponse.builder()
-                        .status(false)
-                        .message("이미 로그인한 상태에서 회원가입이 불가능합니다.")
-                        .build());
 
         if(isVerified == false) return ResponseEntity.badRequest().
                 body(UserDTO.registerResponse.builder()
@@ -41,9 +34,7 @@ public class UserController {
 
         UserDTO.registerResponse registerResponse = userService.register(registerRequest);
 
-        session.setAttribute("loginUser", registerRequest.getEmail());
         session.removeAttribute("emailVerified");
-        
         return ResponseEntity.ok(registerResponse);
     }
 
