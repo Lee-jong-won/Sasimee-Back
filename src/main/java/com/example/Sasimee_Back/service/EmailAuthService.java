@@ -20,6 +20,12 @@ public class EmailAuthService {
         emailVerificationRepository.createRedisData(email, verificationCode);
     }
 
+    public void deleteVerificationCode(String email)
+    {
+        String key = VERIFICATION_CODE_FEY_PREFIX + email;
+        emailVerificationRepository.deleteData(key);
+    }
+
     public boolean verifyEmail(String email, String verificationCode)
     {
         String key = VERIFICATION_CODE_FEY_PREFIX + email;

@@ -23,7 +23,7 @@ public class EmailService {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
     @Async
-    public void sendEmailNotice(EmailDTO.request emailRequest, String type){
+    public EmailDTO.SentResponse sendEmailNotice(EmailDTO.SentRequest emailRequest, String type){
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
@@ -35,9 +35,21 @@ public class EmailService {
             javaMailSender.send(mimeMessage);
 
             log.info("Succeeded to send Email");
+
+            return EmailDTO.SentResponse.builder()
+                    .status(true)
+                    .message("Email sent successfully.")
+                    .receiver(emailRequest.getTo())
+                    .build();
+
         } catch (Exception e) {
             log.info("Failed to send Email");
-            throw new RuntimeException(e);
+
+            return EmailDTO.SentResponse.builder()
+                    .status(false)
+                    .message("Email doesn't sent successfully.")
+                    .receiver(emailRequest.getTo())
+                    .build();
         }
     }
 

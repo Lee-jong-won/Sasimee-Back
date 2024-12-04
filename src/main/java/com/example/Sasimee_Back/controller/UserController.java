@@ -2,6 +2,7 @@ package com.example.Sasimee_Back.controller;
 
 
 import com.example.Sasimee_Back.dto.UserDTO;
+import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.service.EmailAuthService;
 import com.example.Sasimee_Back.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,16 +22,28 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserDTO.registerResponse> registerController(
             @RequestBody UserDTO.registerRequest registerRequest,
-            HttpServletRequest servletRequest,
-            @SessionAttribute(value = "loginUser", required = false) String loginUser)
+            HttpSession session)
     {
-        if(loginUser != null) return ResponseEntity.badRequest().build();
+        String loginUser = (String)session.getAttribute("loginUser");
+        Boolean isVerified = (boolean)session.getAttribute("emailVerified");
+
+        if(loginUser != null) return ResponseEntity.badRequest().
+                body(UserDTO.registerResponse.builder()
+                        .status(false)
+                        .message("이미 로그인한 상태에서 회원가입이 불가능합니다.")
+                        .build());
+
+        if(isVerified == false) return ResponseEntity.badRequest().
+                body(UserDTO.registerResponse.builder()
+                        .status(false)
+                        .message("이메일 인증이 되지 않았습니다. 이메일 인증을 완료한 후 회원가입이 가능합니다.")
+                        .build());
 
         UserDTO.registerResponse registerResponse = userService.register(registerRequest);
 
-        HttpSession session = servletRequest.getSession();
-        session.setAttribute("loginUser", registerResponse.getEmail());
-
+        session.setAttribute("loginUser", registerRequest.getEmail());
+        session.removeAttribute("emailVerified");
+        
         return ResponseEntity.ok(registerResponse);
     }
 

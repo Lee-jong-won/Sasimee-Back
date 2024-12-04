@@ -63,10 +63,8 @@ public class UserDTO {
     @Builder
     @Data
     public static class registerResponse {
+        private boolean status;
         private String message;
-        private String email;
-        private String name;
-        private String redirectURL;
     }
 
 }
