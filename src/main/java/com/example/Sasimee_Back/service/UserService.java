@@ -33,6 +33,23 @@ public class UserService {
         return User.toRegisterResponseDTO(user);
     }
 
+    @Transactional
+    public User login(UserDTO.loginRequest loginRequest)
+    {
+        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+
+        if(userOptional.isEmpty())
+            return null;
+
+        User user = userOptional.get();
+
+        String encryptPassword = user.getEncryptPassword();
+
+        if(!passwordEncoder.matches(loginRequest.getPassword(), encryptPassword))
+            return null;
+
+        return user;
+    }
 
 
 }
