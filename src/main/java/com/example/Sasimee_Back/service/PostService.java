@@ -55,7 +55,7 @@ public class PostService {
 
     public PostDTO.getPostResponse getPostById(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Post not found"));
+                .orElseThrow(()-> new RuntimeException("해당 포스트는 존재하지 않습니다."));
 
         List<String> tags = post.getTags().stream()
                 .map(Tag::getName)
