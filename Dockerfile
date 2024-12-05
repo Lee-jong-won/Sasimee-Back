@@ -22,7 +22,7 @@ FROM openjdk:17-alpine
 WORKDIR /app
 
 # 빌드 이미지에서 생성된 JAR 파일을 런타임 이미지로 복사
-COPY --from=build /app/build/libs/Sasimee-0.0.1-SNAPSHOT.jar /app/Sasimee.jar
+COPY --from=build /app/build/libs/Sasimee-Back-0.0.1-SNAPSHOT.jar /app/Sasimee-Back.jar
 
 # 포트 노출
 EXPOSE 8080
