@@ -4,8 +4,10 @@ package com.example.Sasimee_Back.service;
 import com.example.Sasimee_Back.dto.PostDTO;
 import com.example.Sasimee_Back.entity.Post;
 import com.example.Sasimee_Back.entity.Tag;
+import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.repository.PostRepository;
 import com.example.Sasimee_Back.repository.TagRepository;
+import com.example.Sasimee_Back.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,9 +25,12 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public PostDTO.createResponse createPost(PostDTO.createRequest createRequest){
+    public PostDTO.createResponse createPost(Long user_id, PostDTO.createRequest createRequest){
+        User user = userRepository.findById(user_id).orElse(null);
+
         List<Tag> tags = createRequest.getTags().stream()
                 .map(tagName -> tagRepository.findByName(tagName)
                         .orElseGet(() -> tagRepository.save(new Tag(tagName))))

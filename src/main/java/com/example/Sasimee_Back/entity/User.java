@@ -1,6 +1,5 @@
 package com.example.Sasimee_Back.entity;
 
-import com.example.Sasimee_Back.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,16 +27,6 @@ public class User {
     private String name;
     private String phoneNumber;
     private String address;
-
-
-    public static UserDTO.registerResponse toRegisterResponseDTO(User user)
-    {
-        return UserDTO.registerResponse.builder().email(user.getEmail())
-                .name(user.name)
-                .message("회원가입이 성공적으로 완료되었습니다!")
-                .redirectURL("")
-                .build();
-    }
 
     /*public static UserDTO.loginResponse toLoginResponseDTO(User user)
     {

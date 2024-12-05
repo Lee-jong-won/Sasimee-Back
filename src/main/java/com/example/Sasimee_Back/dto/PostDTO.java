@@ -3,6 +3,7 @@ package com.example.Sasimee_Back.dto;
 import com.example.Sasimee_Back.entity.Post;
 import com.example.Sasimee_Back.entity.PostType;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,7 +19,7 @@ public class PostDTO {
         @NotBlank(message = "내용은 필수 항목입니다.")
         private String content;
 
-        @NotBlank(message = "게시글 형태는 필수 항목입니다.")
+        @NotNull(message = "게시글 형태는 필수 항목입니다.")
         private PostType postType;
 
         private String survey;

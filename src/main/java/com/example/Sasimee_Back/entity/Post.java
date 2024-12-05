@@ -18,17 +18,18 @@ import java.util.List;
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "post_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "post_title")
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "post_content")
     private String content;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "post_type")
     private PostType type;
 
     private String survey;
@@ -36,8 +37,9 @@ public class Post {
     @Column(nullable = false)
     private String deadline;
 
+
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @ManyToMany
