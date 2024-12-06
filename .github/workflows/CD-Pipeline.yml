@@ -14,9 +14,9 @@ jobs:
       - name: Deploy Application
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_KEY }}
           script: |
             echo "### Change directory to Sasimee-Back ###"
             cd /home/opc/Sasimee-Back
