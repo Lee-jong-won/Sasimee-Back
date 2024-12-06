@@ -28,4 +28,4 @@ COPY --from=build /app/build/libs/Sasimee-Back-0.0.1-SNAPSHOT.jar /app/Sasimee-B
 EXPOSE 8080
 
 # MySQL과 Redis가 준비될 때까지 대기 후 백엔드 실행
-CMD ["java", "-jar", "/app/air.jar"]
+CMD ["java", "-jar", "/app/Sasimee-Back.jar"]
