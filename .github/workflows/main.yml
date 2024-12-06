@@ -1,0 +1,20 @@
+name: CD Workflow
+
+on:
+  workflow_run:
+    workflows: ["CI Workflow"]  # CI 워크플로우 이름
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Application
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            echo "Deploying application..."
