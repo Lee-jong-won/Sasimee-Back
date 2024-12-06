@@ -1,16 +1,32 @@
-name: CD Workflow
+name: Backend CD Pipeline
 
 on:
-  workflow_run:
-    workflows: ["Backend Build and Push"]  # CI 워크플로우 이름
-    types:
-      - completed
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install jq
+        run: sudo apt-get install -y jq  # jq 설치
+
+      - name: Get the latest tag from Docker Hub
+        id: get_latest_tag
+        run: |
+          # Docker Hub API를 사용해 최신 태그를 가져옵니다.
+          TAG=$(curl -s "https://hub.docker.com/v2/repositories/greatjongwon/sasimee-back/tags" | jq -r '.results[0].name')
+          echo "TAG=${TAG}" >> $GITHUB_ENV  # 최신 태그를 GITHUB_ENV에 저장
+
       - name: Deploy Application
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -24,11 +40,11 @@ jobs:
             echo "### Pull origin main from github ###"
             git pull origin main
             
-            echo "### Pull new image from dockerhub ###"
-            sudo docker compose build backend
+            echo "### Pull new image from dockerhub with tag ${{ env.TAG }} ###"
+            sudo docker compose build backend --build-arg IMAGE_TAG=${{ env.TAG }}  # Compose 파일에 태그 값 전달
 
             echo "### Shutdown existing container ###"
             sudo docker compose down
 
-            echo "### turnon new container ###"
+            echo "### Turn on new container ###"
             sudo docker compose up -d
