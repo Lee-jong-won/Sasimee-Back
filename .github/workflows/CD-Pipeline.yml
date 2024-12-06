@@ -2,7 +2,7 @@ name: CD Workflow
 
 on:
   workflow_run:
-    workflows: ["CI Workflow"]  # CI 워크플로우 이름
+    workflows: ["CI-Pipeline"]  # CI 워크플로우 이름
     types:
       - completed
 
@@ -16,6 +16,18 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          script: 
-            echo "Deploying application..."
+          script: |
+            echo "### Change directory to Sasimee-Back ###"
+            cd /home/opc/Sasimee-Back
             
+            echo "### Pull origin main from github ###"
+            git pull origin main
+            
+            echo "### Pull new image from dockerhub ###"
+            docker compose build backend
+
+            echo "### Shutdown existing container ###"
+            docker compose down
+
+            echo "### turnon new container ###"
+            docker compose up -d
