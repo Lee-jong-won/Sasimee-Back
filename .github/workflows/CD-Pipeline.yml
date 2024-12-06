@@ -1,13 +1,10 @@
 name: Backend CD Pipeline
 
 on:
-  pull_request:
-    branches:
-      - main
-    types: [closed]
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Backend Build and Push"]  # CI 워크플로우 이름
+    types:
+      - completed
 
 jobs:
   deploy:
