@@ -36,9 +36,12 @@ jobs:
             
             echo "### Pull origin main from github ###"
             git pull origin main
-            
+
+            echo "### Save TAG to .env file ###"
+            echo "IMAGE_TAG=${{ env.TAG }}" > /home/opc/.env  # 정확한 경로 지정
+
             echo "### Pull new image from dockerhub with tag ${{ env.TAG }} ###"
-            sudo docker compose build backend --build-arg IMAGE_TAG=${{ env.TAG }}  # Compose 파일에 태그 값 전달
+            sudo docker compose build backend 
 
             echo "### Shutdown existing container ###"
             sudo docker compose down
