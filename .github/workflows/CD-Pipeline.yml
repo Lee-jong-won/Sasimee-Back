@@ -16,5 +16,6 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          script: |
+          script: 
             echo "Deploying application..."
+            
