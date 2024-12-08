@@ -16,8 +16,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화 (REST API 사용 시 주로 비활성화)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/email/**", "/user/register", "/user/**").permitAll() // 인증 없이 접근 가능
-                        .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
+                        .anyRequest().permitAll() // 그 외 모든 요청은 인증 필요
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)

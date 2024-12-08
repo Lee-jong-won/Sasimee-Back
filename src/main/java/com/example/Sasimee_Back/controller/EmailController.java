@@ -3,6 +3,10 @@ package com.example.Sasimee_Back.controller;
 import com.example.Sasimee_Back.dto.EmailDTO;
 import com.example.Sasimee_Back.service.EmailAuthService;
 import com.example.Sasimee_Back.service.EmailService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/email")
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "email 인증", description="email 인증을 위한 api들")
 @Slf4j
 public class EmailController {
 
     private final EmailService emailService;
     private final EmailAuthService emailAuthService;
 
+    @Operation(summary = "인증 메일 보내기", description = "회원 가입을 희망하는 사람의 이메일로 메일 보내기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이메일 보내기 성공"),
+            @ApiResponse(responseCode = "500", description = "이메일 전송 실패")
+    })
     @PostMapping("/send")
     public ResponseEntity<EmailDTO.SentResponse> sendMail(@RequestBody EmailDTO.SentRequest emailRequest) {
 
