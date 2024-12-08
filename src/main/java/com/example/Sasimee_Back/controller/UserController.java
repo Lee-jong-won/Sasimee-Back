@@ -23,7 +23,9 @@ public class UserController {
             @RequestBody UserDTO.registerRequest registerRequest,
             HttpSession session)
     {
-        Boolean isVerified = (boolean)session.getAttribute("emailVerified");
+        boolean isVerified = true;
+        if(session.getAttribute("emailVerified") == null)
+            isVerified = false;
 
         if(isVerified == false) return ResponseEntity.badRequest().
                 body(UserDTO.registerResponse.builder()
@@ -32,8 +34,8 @@ public class UserController {
                         .build());
 
         UserDTO.registerResponse registerResponse = userService.register(registerRequest);
-
         session.removeAttribute("emailVerified");
+
         return ResponseEntity.ok(registerResponse);
     }
 
@@ -42,7 +44,7 @@ public class UserController {
                                                                  HttpSession session)
     {
         //중복 로그인 방지
-        String loginEmail = (String)session.getAttribute("loginEmail");
+        Object loginEmail = session.getAttribute("loginEmail");
         if(loginEmail != null) return ResponseEntity.badRequest().build();
 
         //아이디 또는 비밀번호가 틀린 경우 로그인 불가능
