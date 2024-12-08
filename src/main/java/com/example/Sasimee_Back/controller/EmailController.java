@@ -4,6 +4,8 @@ import com.example.Sasimee_Back.dto.EmailDTO;
 import com.example.Sasimee_Back.service.EmailAuthService;
 import com.example.Sasimee_Back.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +32,8 @@ public class EmailController {
     @Operation(summary = "인증 메일 보내기", description = "회원 가입을 희망하는 사람의 이메일로 메일 보내기")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이메일 보내기 성공"),
-            @ApiResponse(responseCode = "500", description = "이메일 전송 실패")
+            @ApiResponse(responseCode = "500", description = "이메일 전송 실패"
+            )
     })
     @PostMapping("/send")
     public ResponseEntity<EmailDTO.SentResponse> sendMail(@RequestBody EmailDTO.SentRequest emailRequest) {
@@ -48,6 +51,12 @@ public class EmailController {
         }
     }
 
+    @Operation(summary = "이메일 검증하기", description = "회원 가입을 희망하는 사람이 받은 메일에서 인증 번호를 입력하여 서버에 전달한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "403", description = "인증 번호가 틀린 경우"),
+            @ApiResponse(responseCode = "200", description = "이메일 인증 성공"
+            )
+    })
     @PostMapping("/verify")
     public ResponseEntity<EmailDTO.VerifyMailResponse> verifyMail(@RequestBody EmailDTO.VerifyMailRequest request,
     HttpSession session) {

@@ -16,9 +16,9 @@ public class SwaggerConfig {
 
     //http://localhost:8080/swagger-ui.html
 
-    @Value("${votogether.openapi.dev-url}")
+    @Value("${sasimee.openapi.dev-url}")
     private String devUrl;
-    @Value("${votogether.openapi.prod-url}")
+    @Value("${sasimee.openapi.prod-url}")
     private String prodUrl;
 
 

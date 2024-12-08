@@ -8,9 +8,13 @@ public class EmailDTO {
 
     @Getter
     @Builder
+    @Schema(description = "이메일 전송 요청")
     public static class SentRequest {
+        @Schema(example = "이메일 전송 대상")
         private String to;
+        @Schema(example = "이메일 제목")
         private String subject;
+        @Schema(description = "인증 번호 api 요청시, null값 전달", example = "이메일 내용")
         private String message;
     }
 
@@ -18,25 +22,31 @@ public class EmailDTO {
     @Builder
     @Schema(description ="이메일 전송 응답")
     public static class SentResponse {
-        @Schema(description = "이메일 전송 성공 여부", example = "true")
+        @Schema(example = "이메일 전송 성공 여부")
         private boolean status;
-        @Schema(description = "이메일 전송에 따른 알림 메시지", example = "이메일이 성공적으로 전송되었습니다!")
+        @Schema(example = "이메일 전송 성공 여부에 따른 메시지")
         private String message;
-        @Schema(description = "이메일 전송 대상", example = "example@example.com")
+        @Schema(example = "이메일 전송 대상 이메일")
         private String receiver;
     }
 
     @Getter
     @Builder
+    @Schema
     public static class VerifyMailRequest{
+        @Schema(example = "인증 번호를 받은 이메일")
         private String email;
+        @Schema(example = "이메일로 전송된 인증번호")
         private String authNum;
     }
 
     @Getter
     @Builder
+    @Schema
     public static class VerifyMailResponse{
+        @Schema(example = "이메일 인증 성공 여부")
         private boolean status;
+        @Schema(example = "이메일 인증 성공 여부에 따른 메시지")
         private String message;
     }
 }
