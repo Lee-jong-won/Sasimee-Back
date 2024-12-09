@@ -1,5 +1,6 @@
 package com.example.Sasimee_Back.entity;
 
+import com.example.Sasimee_Back.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
