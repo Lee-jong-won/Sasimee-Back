@@ -28,7 +28,6 @@ public class User {
     private String phoneNumber;
     private String address;
 
-<<<<<<< HEAD
 
     public static UserDTO.registerResponse toRegisterResponseDTO(User user)
     {
@@ -38,11 +37,5 @@ public class User {
                 .build();
     }
 
-=======
->>>>>>> feat-tag-post
-    /*public static UserDTO.loginResponse toLoginResponseDTO(User user)
-    {
-
-    }*/
 
 }
