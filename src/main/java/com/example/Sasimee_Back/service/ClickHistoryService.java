@@ -58,7 +58,7 @@ public class ClickHistoryService {
             Post post = clickHistory.getPost();
             List<String> tags =post.getTags().stream()
                     .map(Tag::getName)
-                    .collect(Collectors.toList());
+                    .toList();
 
             for(String tag : tags){
                 tagFrequencies.put(tag, tagFrequencies.getOrDefault(tag, 0) + 1);
@@ -69,6 +69,6 @@ public class ClickHistoryService {
                 .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
                 .limit(3)
                 .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
