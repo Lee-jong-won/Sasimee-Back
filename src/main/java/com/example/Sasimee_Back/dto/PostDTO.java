@@ -2,6 +2,7 @@ package com.example.Sasimee_Back.dto;
 
 import com.example.Sasimee_Back.entity.Post;
 import com.example.Sasimee_Back.entity.PostType;
+import com.example.Sasimee_Back.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -27,6 +28,9 @@ public class PostDTO {
         private String deadline;
 
         private List<String> tags;
+
+        @NotNull(message = "유저의 정보는 필수 항목입니다.")
+        private User user;
     }
 
     @Data
@@ -57,6 +61,7 @@ public class PostDTO {
         private String survey;
         private String deadline;
         private List<String> tags;
+        private String author;
     }
 
     @Data

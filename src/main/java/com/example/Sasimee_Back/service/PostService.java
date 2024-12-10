@@ -43,6 +43,7 @@ public class PostService {
                 .survey(createRequest.getSurvey())
                 .deadline(createRequest.getDeadline())
                 .tags(tags)
+                .user(user)
                 .build();
 
         Post savedPost = postRepository.save(post);
@@ -62,6 +63,11 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("해당 포스트는 존재하지 않습니다."));
 
+        String userName = post.getUser().getName();
+        if(userName == null){
+            throw new RuntimeException("유저의 이름을 조회할 수 없습니다.");
+        }
+
         List<String> tags = post.getTags().stream()
                 .map(Tag::getName)
                 .collect(Collectors.toList());
@@ -74,6 +80,7 @@ public class PostService {
         response.setSurvey(post.getSurvey());
         response.setDeadline(post.getDeadline());
         response.setTags(tags);
+        response.setAuthor(userName);
 
         return response;
     }
@@ -126,9 +133,16 @@ public class PostService {
                 .build();
     }
 
-    public void deletePost(Long postId){
+    public void deletePost(Long userId, Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("해당 포스트는 존재하지 않습니다."));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저는 존재하지 않습니다."));
+
+        if(!post.getUser().equals(user)){
+            throw new RuntimeException("이 포스트는 해당 유저가 작성한 게시글이 아닙니다.");
+        }
 
         postRepository.delete(post);
     }

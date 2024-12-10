@@ -1,11 +1,13 @@
 package com.example.Sasimee_Back.controller;
 
 import com.example.Sasimee_Back.dto.PostDTO;
+import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,9 +17,9 @@ public class PostController {
     private final PostService postService;
 
     //Create Post Function
-    @PostMapping("/{user_id}")
-    public ResponseEntity<PostDTO.createResponse> post(@PathVariable Long user_id, @Valid @RequestBody PostDTO.createRequest createRequest) {
-        PostDTO.createResponse response = postService.createPost(user_id, createRequest);
+    @PostMapping
+    public ResponseEntity<PostDTO.createResponse> post(@AuthenticationPrincipal User user, @Valid @RequestBody PostDTO.createRequest createRequest) {
+        PostDTO.createResponse response = postService.createPost(user.getId(), createRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -45,8 +47,8 @@ public class PostController {
 
     //Delete Post (by ID)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        postService.deletePost(user.getId(), id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
