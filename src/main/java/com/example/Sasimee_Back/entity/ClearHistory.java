@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Entity
 @Getter
 @Setter
-public class ClickHistory {
+public class ClearHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

@@ -8,21 +8,17 @@ import com.example.Sasimee_Back.repository.ClickHistoryRepository;
 import com.example.Sasimee_Back.repository.PostRepository;
 import com.example.Sasimee_Back.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ClickHistoryService {
     private final ClickHistoryRepository clickHistoryRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
-    public ClickHistoryService(ClickHistoryRepository clickHistoryRepository, PostRepository postRepository, UserRepository userRepository) {
-        this.clickHistoryRepository = clickHistoryRepository;
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public void saveClickHistory(Long userId, Long postId){
