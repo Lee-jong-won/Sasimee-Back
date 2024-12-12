@@ -1,6 +1,5 @@
 package com.example.Sasimee_Back.controller;
 
-import com.example.Sasimee_Back.entity.ClearHistory;
 import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.service.ClearHistoryService;
 import lombok.RequiredArgsConstructor;
