@@ -51,7 +51,7 @@ public class ClickHistoryService {
 
         for(ClickHistory clickHistory : clickHistoryList){
             Post post = clickHistory.getPost();
-            List<String> tags =post.getTags().stream()
+            List<String> tags = post.getTags().stream()
                     .map(Tag::getName)
                     .toList();
 
