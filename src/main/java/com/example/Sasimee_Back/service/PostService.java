@@ -28,8 +28,8 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional
-    public PostDTO.createResponse createPost(Long user_id, PostDTO.createRequest createRequest){
-        User user = userRepository.findById(user_id).orElse(null);
+    public PostDTO.createResponse createPost(Long userId, PostDTO.createRequest createRequest){
+        User user = userRepository.findById(userId).orElse(null);
 
         List<Tag> tags = createRequest.getTags().stream()
                 .map(tagName -> tagRepository.findByName(tagName)
@@ -63,7 +63,9 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("해당 포스트는 존재하지 않습니다."));
 
-        String userName = post.getUser().getName();
+        User user = post.getUser();
+        String userName = user.getName();
+
         if(userName == null){
             throw new RuntimeException("유저의 이름을 조회할 수 없습니다.");
         }

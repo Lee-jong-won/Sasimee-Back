@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,15 +20,15 @@ public class PostController {
 
     //Create Post Function
     @PostMapping
-    public ResponseEntity<PostDTO.createResponse> post(@AuthenticationPrincipal User user, @Valid @RequestBody PostDTO.createRequest createRequest) {
-        PostDTO.createResponse response = postService.createPost(user.getId(), createRequest);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<PostDTO.createResponse> post(@RequestParam Long userId, @Valid @RequestBody PostDTO.createRequest createRequest) {
+            PostDTO.createResponse response = postService.createPost(userId, createRequest);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     //Search Post (by ID)
-    @GetMapping("/{id}")
-    public ResponseEntity<PostDTO.getPostResponse> getPostById(@PathVariable Long id) {
-        PostDTO.getPostResponse response = postService.getPostById(id);
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDTO.getPostResponse> getPostById(@PathVariable Long postId) {
+        PostDTO.getPostResponse response = postService.getPostById(postId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -46,9 +48,9 @@ public class PostController {
     }
 
     //Delete Post (by ID)
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id, @AuthenticationPrincipal User user) {
-        postService.deletePost(user.getId(), id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@RequestParam Long userId, @PathVariable Long postId) {
+            postService.deletePost(userId, postId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
