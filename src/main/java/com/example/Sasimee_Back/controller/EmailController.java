@@ -38,8 +38,9 @@ public class EmailController {
     @PostMapping("/send")
     public ResponseEntity<EmailDTO.SentResponse> sendMail(@RequestBody EmailDTO.SentRequest emailRequest) {
 
+        log.info("email sent");
         String authNum = EmailAuthService.createdCertifyNum();
-        emailAuthService.saveVerificationCode(emailRequest.getTo(), authNum);
+        emailAuthService.saveVerificationCode(emailRequest.getTo(), authNum, 30);
         EmailDTO.SentResponse response = emailService.sendEmailNotice(emailRequest, authNum, "email");
 
         if(response.isStatus() == false) {
@@ -69,19 +70,6 @@ public class EmailController {
                             .message("인증 번호가 틀립니다!")
                             .build());
         else {
-            session.setAttribute("emailVerified", true);
-            session.setAttribute("verifiedEmail", request.getEmail());
-
-            Object attributionValue1 = session.getAttribute("emailVerified");
-            Object attributionValue2 = session.getAttribute("verifiedEmail");
-
-            if(attributionValue1 != null )
-                log.info("session1 값이 존재합니다.");
-
-            if(attributionValue2 != null)
-                log.info("session2 값이 존재합니다.");
-
-
             return ResponseEntity.ok(EmailDTO.VerifyMailResponse.builder().status(true)
                     .message("이메일 인증이 성공적으로 완료되었습니다.")
                     .build());

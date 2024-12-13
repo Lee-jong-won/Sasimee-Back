@@ -18,6 +18,9 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Setter
     private String encryptPassword;
 
@@ -28,6 +31,11 @@ public class User {
     private String name;
     private String phoneNumber;
     private String address;
+    private String birth;
+
+    public void addUserAuthority(){
+        this.role = Role.ROLE_USER;
+    }
 
 
     public static UserDTO.registerResponse toRegisterResponseDTO(User user)

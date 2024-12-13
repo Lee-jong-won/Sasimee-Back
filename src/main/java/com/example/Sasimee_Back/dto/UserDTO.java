@@ -23,24 +23,8 @@ public class UserDTO {
         private String password;
     }
 
-    @Builder
     @Data
-    @Schema(description = "로그인 성공 여부에 대한 응답 정보")
-    public static class loginResponse {
-        @Schema(example = "이메일")
-        private String email;
-        @Schema(example = "성별")
-        private String gender;
-        @Schema(example = "이름")
-        private String name;
-        @Schema(example = "핸드폰 번호")
-        private String phoneNumber;
-        @Schema(example = "주소")
-        private String address;
-    }
-
-    @Data
-    @Schema
+    @Schema(description = "회원가입을 위한 요청 정보")
     public static class registerRequest {
         @NotBlank(message = "이메일은 필수 항목입니다.")
         @Email
@@ -71,6 +55,10 @@ public class UserDTO {
         @NotBlank(message = "주소는 필수 항목입니다.")
         private String address;
 
+        @Schema(example = "생년월일")
+        @NotBlank(message = "주소는 필수 항목입니다.")
+        private String birth;
+
         public static User toEntity(UserDTO.registerRequest registerRequest)
         {
             return User.builder().name(registerRequest.name)
@@ -78,6 +66,7 @@ public class UserDTO {
                     .gender(Gender.fromString(registerRequest.gender))
                     .address(registerRequest.address)
                     .phoneNumber(registerRequest.phoneNumber)
+                    .birth(registerRequest.birth)
                     .encryptPassword(registerRequest.password1)
                     .build();
         }
