@@ -1,8 +1,6 @@
 package com.example.Sasimee_Back.dto;
 
-import com.example.Sasimee_Back.entity.Post;
 import com.example.Sasimee_Back.entity.PostType;
-import com.example.Sasimee_Back.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
