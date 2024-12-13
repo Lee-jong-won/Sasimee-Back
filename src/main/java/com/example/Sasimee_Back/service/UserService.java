@@ -5,6 +5,7 @@ import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.exception.UserAlreadyExistsException;
 import com.example.Sasimee_Back.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    //토큰 만료시간은 1시간으로 설정
+    private Long expiredMs = 1000 * 60 * 60l;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -28,27 +35,9 @@ public class UserService {
 
         registerRequest.setPassword1(passwordEncoder.encode(registerRequest.getPassword1()));
         User user = UserDTO.registerRequest.toEntity(registerRequest);
+        user.addUserAuthority();
         userRepository.save(user);
-
         return User.toRegisterResponseDTO(user);
-    }
-
-    @Transactional
-    public User login(UserDTO.loginRequest loginRequest)
-    {
-        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-
-        if(userOptional.isEmpty())
-            return null;
-
-        User user = userOptional.get();
-
-        String encryptPassword = user.getEncryptPassword();
-
-        if(!passwordEncoder.matches(loginRequest.getPassword(), encryptPassword))
-            return null;
-
-        return user;
     }
 
 

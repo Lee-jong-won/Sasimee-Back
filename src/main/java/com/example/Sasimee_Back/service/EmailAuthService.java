@@ -13,11 +13,16 @@ public class EmailAuthService {
 
     private final EmailVerificationRepository emailVerificationRepository;
     private static final String VERIFICATION_CODE_FEY_PREFIX = "verification-code:";
+    private static final String VERIFICATED_EMAIL_INFO = "verified-email:";
+    public void saveVerificationCode(String email, String verificationcode, long timeout) {
 
-    public void saveVerificationCode(String email, String verificationCode)
-    {
         String key = VERIFICATION_CODE_FEY_PREFIX + email;
-        emailVerificationRepository.createRedisData(key, verificationCode);
+
+        if (emailVerificationRepository.existData(key)) {
+            emailVerificationRepository.deleteData(key);
+        }
+
+        emailVerificationRepository.save(key, verificationcode, timeout);
     }
 
     public void deleteVerificationCode(String email)
@@ -33,10 +38,28 @@ public class EmailAuthService {
 
         if(savedCode != null && savedCode.equals(verificationCode)) {
             emailVerificationRepository.deleteData(key);
+
+            String emailkey = VERIFICATED_EMAIL_INFO + email;
+            emailVerificationRepository.save(emailkey, "true", 30);
+
             return true;
         }
         return false;
     }
+
+    public boolean verifyEmailAuthentication(String email)
+    {
+        String emailkey = VERIFICATED_EMAIL_INFO + email;
+        boolean isAuthenticated = emailVerificationRepository.existData(emailkey);
+
+        if(isAuthenticated) {
+            emailVerificationRepository.deleteData(emailkey);
+            return true;
+        }
+        else
+            return false;
+    }
+
 
     public static String createdCertifyNum() {
         int leftLimit = 48; // number '0'
@@ -50,5 +73,6 @@ public class EmailAuthService {
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
     }
+
 
 }
