@@ -19,8 +19,8 @@ public class CrawlerController {
     
     @GetMapping("/AIresponse")
     @ApiResponses({
-            @ApiResponse(responseCode = "400", description = "구글폼 분석 성공"),
-            @ApiResponse(responseCode = "200", description = "구글폼 분석 실패")
+            @ApiResponse(responseCode = "200", description = "구글폼 분석 성공"),
+            @ApiResponse(responseCode = "400", description = "구글폼 분석 실패")
     })
     public String verifyQuestions(@RequestParam String formUrl) throws IOException {
         return crawlerService.verifyQuestions(formUrl);

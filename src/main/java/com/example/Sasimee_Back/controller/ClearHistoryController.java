@@ -22,8 +22,8 @@ public class ClearHistoryController {
 
     @PostMapping("/save/{postId}")
     @ApiResponses({
-            @ApiResponse(responseCode = "400", description = "수행한 게시글 저장 성공"),
-            @ApiResponse(responseCode = "200", description = "수행한 게시글 저장 실패")
+            @ApiResponse(responseCode = "200", description = "수행한 게시글 저장 성공"),
+            @ApiResponse(responseCode = "400", description = "수행한 게시글 저장 실패")
     })
     public ResponseEntity<Void> saveClearHistory(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @PathVariable Long postId) {
         clearHistoryService.saveClearHistory(sasimeePrincipal.getUseremail(), postId);
@@ -32,8 +32,8 @@ public class ClearHistoryController {
 
     @GetMapping
     @ApiResponses({
-            @ApiResponse(responseCode = "400", description = "수행한 게시글들 전체 조회 성공"),
-            @ApiResponse(responseCode = "200", description = "수행한 게시글들 전체 조회 실패")
+            @ApiResponse(responseCode = "200", description = "수행한 게시글들 전체 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "수행한 게시글들 전체 조회 실패")
     })
     public ResponseEntity<PostDTO.getAllPostResponse> getPostHistory(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
         PostDTO.getAllPostResponse response = postService.getPostByHistory(sasimeePrincipal.getUseremail());

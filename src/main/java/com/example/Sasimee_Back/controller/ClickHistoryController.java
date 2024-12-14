@@ -24,8 +24,8 @@ public class ClickHistoryController {
 
     @PostMapping("/save/{postId}")
     @ApiResponses({
-            @ApiResponse(responseCode = "400", description = "클릭 기록 저장 성공"),
-            @ApiResponse(responseCode = "200", description = "클릭 기록 저장 실패")
+            @ApiResponse(responseCode = "200", description = "클릭 기록 저장 성공"),
+            @ApiResponse(responseCode = "400", description = "클릭 기록 저장 실패")
     })
     public ResponseEntity<Void> saveClickHistory(@PathVariable Long postId, @AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
 
@@ -35,8 +35,8 @@ public class ClickHistoryController {
 
     @GetMapping("/recommend")
     @ApiResponses({
-            @ApiResponse(responseCode = "400", description = "클릭 기록 기반 게시글들 추천 성공"),
-            @ApiResponse(responseCode = "200", description = "클릭 기록 기반 게시글들 추천 실패")
+            @ApiResponse(responseCode = "200", description = "클릭 기록 기반 게시글들 추천 성공"),
+            @ApiResponse(responseCode = "400", description = "클릭 기록 기반 게시글들 추천 실패")
     })
     public ResponseEntity<Object> recommendByHistory(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
             try{

@@ -96,7 +96,7 @@ public class PostService {
         List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
                 .map(post -> {
                     List<String> tags = post.getTags().stream()
-                            .map(tag -> tag.getName())
+                            .map(Tag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
@@ -120,7 +120,7 @@ public class PostService {
                     Post post = clearHistory.getPost();
 
                     List<String> tags = post.getTags().stream()
-                            .map(tag -> tag.getName())
+                            .map(Tag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
@@ -142,7 +142,7 @@ public class PostService {
         List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
                 .map(post -> {
                     List<String> tags = post.getTags().stream()
-                            .map(tag -> tag.getName())
+                            .map(Tag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
@@ -162,11 +162,11 @@ public class PostService {
                 .build();
     }
 
-    public void deletePost(String useremail, Long postId){
+    public void deletePost(String userEmail, Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("해당 포스트는 존재하지 않습니다."));
 
-        User user = userRepository.findByEmail(useremail)
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("해당 유저는 존재하지 않습니다."));
 
         if(!post.getUser().equals(user)){
