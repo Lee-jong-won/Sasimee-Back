@@ -1,6 +1,5 @@
 package com.example.Sasimee_Back.controller;
 
-import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.service.ClearHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -8,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "수행 기록", description = "사용자가 완료한 포스트들을 관리하는 API")
