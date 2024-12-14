@@ -15,6 +15,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class CrawlerService {
 
+    private final GeminiService geminiService;
+
+    public CrawlerService(GeminiService geminiService) {
+        this.geminiService = geminiService;
+    }
+
     public List<String> questions(String formUrl) throws IOException {
         List<String> questions = new ArrayList<>();
 
@@ -57,5 +63,12 @@ public class CrawlerService {
         }
 
         return questions;
+    }
+
+    public String verifyQuestions(String formUrl) throws IOException {
+        List<String> questions = questions(formUrl);
+        String combinedQuestions = String.join("\n", questions);
+
+        return geminiService.AIRequest(combinedQuestions);
     }
 }
