@@ -1,5 +1,6 @@
 package com.example.Sasimee_Back.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ public class GeminiDTO {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Schema(description = "AI 검수 요청을 위해 필요한 정보")
     public static class GeminiRequest{
         private List<Content> contents;
 
@@ -44,6 +46,7 @@ public class GeminiDTO {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @Schema(description = "AI 검수 이후의 응답")
     public static class GeminiResponse{
         private List<Candidate> candidates;
 
