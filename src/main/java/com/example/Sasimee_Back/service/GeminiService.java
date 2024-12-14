@@ -1,6 +1,5 @@
 package com.example.Sasimee_Back.service;
 
-import com.example.Sasimee_Back.dto.GeminiDTO;
 import com.example.Sasimee_Back.dto.GeminiDTO.GeminiRequest;
 import com.example.Sasimee_Back.dto.GeminiDTO.GeminiResponse;
 import lombok.RequiredArgsConstructor;

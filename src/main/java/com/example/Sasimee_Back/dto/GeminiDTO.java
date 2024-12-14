@@ -17,7 +17,7 @@ public class GeminiDTO {
         private List<Content> contents;
 
         @Data
-        public class Content {
+        public static class Content {
             private List<Part> parts;
 
             public Content(String text){
@@ -29,7 +29,7 @@ public class GeminiDTO {
             @Data
             @NoArgsConstructor
             @AllArgsConstructor
-            public class Part{
+            public static class Part{
                 private String text;
             }
         }
