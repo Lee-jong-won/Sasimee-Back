@@ -2,9 +2,11 @@ package com.example.Sasimee_Back.service;
 
 
 import com.example.Sasimee_Back.dto.PostDTO;
+import com.example.Sasimee_Back.entity.ClearHistory;
 import com.example.Sasimee_Back.entity.Post;
 import com.example.Sasimee_Back.entity.Tag;
 import com.example.Sasimee_Back.entity.User;
+import com.example.Sasimee_Back.repository.ClearHistoryRepository;
 import com.example.Sasimee_Back.repository.PostRepository;
 import com.example.Sasimee_Back.repository.TagRepository;
 import com.example.Sasimee_Back.repository.UserRepository;
@@ -26,6 +28,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
+    private final ClearHistoryRepository clearHistoryRepository;
 
     @Transactional
     public PostDTO.createResponse createPost(String userEmail, PostDTO.createRequest createRequest){
@@ -92,6 +95,30 @@ public class PostService {
 
         List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
                 .map(post -> {
+                    List<String> tags = post.getTags().stream()
+                            .map(tag -> tag.getName())
+                            .collect(Collectors.toList());
+
+                    return PostDTO.getAllPostResponse.PostSummary.builder()
+                            .id(post.getId())
+                            .title(post.getTitle())
+                            .postType(post.getType())
+                            .tags(tags)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return PostDTO.getAllPostResponse.builder().posts(postSummaries).build();
+    }
+
+    public PostDTO.getAllPostResponse getPostByHistory(String userEmail){
+        User user = userRepository.findByEmail(userEmail).orElse(null);
+        List<ClearHistory> clearHistories = clearHistoryRepository.findByUser(user);
+
+        List<PostDTO.getAllPostResponse.PostSummary> postSummaries = clearHistories.stream()
+                .map(clearHistory -> {
+                    Post post = clearHistory.getPost();
+
                     List<String> tags = post.getTags().stream()
                             .map(tag -> tag.getName())
                             .collect(Collectors.toList());
