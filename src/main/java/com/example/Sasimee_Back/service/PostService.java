@@ -28,8 +28,8 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional
-    public PostDTO.createResponse createPost(Long userId, PostDTO.createRequest createRequest){
-        User user = userRepository.findById(userId).orElse(null);
+    public PostDTO.createResponse createPost(String useremail, PostDTO.createRequest createRequest){
+        User user = userRepository.findByEmail(useremail).orElse(null);
 
         List<Tag> tags = createRequest.getTags().stream()
                 .map(tagName -> tagRepository.findByName(tagName)
@@ -135,11 +135,11 @@ public class PostService {
                 .build();
     }
 
-    public void deletePost(Long userId, Long postId){
+    public void deletePost(String useremail, Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("해당 포스트는 존재하지 않습니다."));
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(useremail)
                 .orElseThrow(() -> new RuntimeException("해당 유저는 존재하지 않습니다."));
 
         if(!post.getUser().equals(user)){

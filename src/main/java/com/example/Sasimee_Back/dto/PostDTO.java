@@ -26,9 +26,6 @@ public class PostDTO {
         private String deadline;
 
         private List<String> tags;
-
-        @NotNull(message = "유저의 정보는 필수 항목입니다.")
-        private Long userId;
     }
 
     @Data
