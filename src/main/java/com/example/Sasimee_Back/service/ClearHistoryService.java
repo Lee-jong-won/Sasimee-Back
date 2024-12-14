@@ -20,8 +20,8 @@ public class ClearHistoryService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void saveClearHistory(Long userId, Long postId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+    public void saveClearHistory(String useremail, Long postId){
+        User user = userRepository.findByEmail(useremail).orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("포스트를 찾을 수 없습니다."));
 
         ClearHistory clearHistory = new ClearHistory();

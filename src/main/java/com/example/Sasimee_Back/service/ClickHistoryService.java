@@ -21,8 +21,8 @@ public class ClickHistoryService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void saveClickHistory(Long userId, Long postId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+    public void saveClickHistory(String userEmail, Long postId){
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("글을 찾을 수 없습니다."));
 
         List<ClickHistory> clickHistoryList = clickHistoryRepository.findByUser(user);
@@ -44,8 +44,8 @@ public class ClickHistoryService {
     }
 
     @Transactional
-    public List<String> recommender(Long userId){
-        List<ClickHistory> clickHistoryList = clickHistoryRepository.findByUser(userRepository.findById(userId).orElseThrow(RuntimeException::new));
+    public List<String> recommender(String userEmail){
+        List<ClickHistory> clickHistoryList = clickHistoryRepository.findByUser(userRepository.findByEmail(userEmail).orElseThrow(RuntimeException::new));
 
         Map<String, Integer> tagFrequencies = new HashMap<>();
 

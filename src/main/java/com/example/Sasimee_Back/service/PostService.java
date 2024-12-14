@@ -28,8 +28,8 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional
-    public PostDTO.createResponse createPost(String useremail, PostDTO.createRequest createRequest){
-        User user = userRepository.findByEmail(useremail).orElse(null);
+    public PostDTO.createResponse createPost(String userEmail, PostDTO.createRequest createRequest){
+        User user = userRepository.findByEmail(userEmail).orElse(null);
 
         List<Tag> tags = createRequest.getTags().stream()
                 .map(tagName -> tagRepository.findByName(tagName)
