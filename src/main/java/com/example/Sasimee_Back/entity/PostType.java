@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Getter
 public enum PostType {
-    S("Survey"), T("Task");
+    SURVEY("Survey"),
+    TASK("Task");
 
     private final String postType;
 
