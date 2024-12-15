@@ -28,7 +28,7 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "설문형 게시글 등록 실패")
     })
     public ResponseEntity<PostDTO.createSurveyResponse> surveyPost(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @Valid @RequestBody PostDTO.createSurveyRequest createRequest) {
-        String userEmail = sasimeePrincipal.getUseremail();
+        String userEmail = sasimeePrincipal.getUsername();
         PostDTO.createSurveyResponse response = postService.createSurveyPost(userEmail, createRequest);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -40,7 +40,7 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "수행형 게시글 등록 실패")
     })
     public ResponseEntity<PostDTO.createTaskResponse> taskPost(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @Valid @RequestBody PostDTO.createTaskRequest createRequest) {
-        String userEmail = sasimeePrincipal.getUseremail();
+        String userEmail = sasimeePrincipal.getUsername();
         PostDTO.createTaskResponse response = postService.createTaskPost(userEmail, createRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -99,7 +99,7 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "ID 기반 게시글 삭제 실패")
     })
     public ResponseEntity<Void> deletePost(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @PathVariable Long postId) {
-        String userEmail = sasimeePrincipal.getUseremail();
+        String userEmail = sasimeePrincipal.getUsername();
         postService.deletePost(userEmail, postId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

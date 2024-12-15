@@ -30,7 +30,7 @@ public class ClickHistoryController {
     })
     public ResponseEntity<Void> saveClickHistory(@PathVariable Long postId, @AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
 
-            clickHistoryService.saveClickHistory(sasimeePrincipal.getUseremail(), postId);
+            clickHistoryService.saveClickHistory(sasimeePrincipal.getUsername(), postId);
             return ResponseEntity.ok().build();
     }
 
@@ -41,7 +41,7 @@ public class ClickHistoryController {
     })
     public ResponseEntity<Object> recommendByHistory(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @PathVariable PostType postType) {
             try{
-                List<String> topTags = clickHistoryService.recommender(sasimeePrincipal.getUseremail());
+                List<String> topTags = clickHistoryService.recommender(sasimeePrincipal.getUsername());
                 PostDTO.getAllPostResponse posts = postService.getPostByTag(topTags.get(0), postType);
                 return ResponseEntity.ok(posts);
             }catch (Exception e){
