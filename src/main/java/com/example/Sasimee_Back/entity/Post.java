@@ -18,18 +18,17 @@ import java.util.List;
 public class Post {
 
     @Id
-    @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, name = "post_title")
+    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, name = "post_content")
+    @Column(nullable = false)
     private String content;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, name = "post_type")
+    @Column(nullable = false)
     private PostType type;
 
     private String survey;

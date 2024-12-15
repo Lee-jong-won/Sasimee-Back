@@ -69,12 +69,12 @@ public class PostController {
     }
 
     //Search Posts (by tag name)
-    @GetMapping("/tag/{tagName}")
+    @GetMapping("/tag/{postType}/{tagName}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "태그를 포함한 게시글들 조회 성공"),
             @ApiResponse(responseCode = "400", description = "태그를 포함한 게시글들 조회 실패")
     })
-    public ResponseEntity<PostDTO.getAllPostResponse> getPostByTag(@PathVariable String tagName, @PathVariable PostType postType) {
+    public ResponseEntity<PostDTO.getAllPostResponse> getPostByTag( @PathVariable PostType postType, @PathVariable String tagName) {
         PostDTO.getAllPostResponse response = postService.getPostByTag(tagName, postType);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
