@@ -1,5 +1,7 @@
 package com.example.Sasimee_Back.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
@@ -10,6 +12,10 @@ public enum PostType {
 
     PostType(String postType) {this.postType = postType;}
 
+    @JsonValue
+    public String getPostType() {return postType;}
+
+    @JsonCreator
     public static PostType fromString(String value) {
         if("Survey".equalsIgnoreCase(value)) {
             return S;
