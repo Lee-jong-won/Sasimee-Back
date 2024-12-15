@@ -24,7 +24,7 @@ public class Post {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "post_content")
     private String content;
 
     @Enumerated(EnumType.STRING)
@@ -53,7 +53,7 @@ public class Post {
     private String address;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = true)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToMany
