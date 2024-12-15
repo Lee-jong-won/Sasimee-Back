@@ -21,7 +21,12 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private List<Post> posts;
 
-    public Tag(String tagName) {
-        this.name = tagName;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TagCategory category;
+
+    public Tag(String name, TagCategory category) {
+        this.name = name;
+        this.category = category;
     }
 }

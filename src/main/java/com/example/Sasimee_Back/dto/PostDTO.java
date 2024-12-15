@@ -12,42 +12,119 @@ import java.util.List;
 public class PostDTO {
     @Data
     @Builder
-    @Schema(description = "게시글 생성을 위한 요청 정보")
-    public static class createRequest{
+    @Schema(description = "설문형 게시글 생성을 위한 요청 정보")
+    public static class createSurveyRequest{
         @NotBlank(message = "제목은 필수 항목입니다.")
         @Schema(description = "게시글 생성을 위한 제목")
         private String title;
 
         @NotBlank(message = "내용은 필수 항목입니다.")
-        @Schema(description = "게시글 생성을 위한 내용")
+        @Schema(description = "설문에 대한 자세한 정보")
         private String content;
 
         @NotNull(message = "게시글 형태는 필수 항목입니다.")
-        @Schema(description = "게시글의 속성 - S는 설문형, A는 참여형")
+        @Schema(description = "게시글의 속성 \"Survey\" 혹은 \"Task\" 을 입력해야 합니다.")
         private PostType postType;
 
+        @NotNull(message = "설문형에서 구글폼 링크는 필수 항목입니다.")
         @Schema(description = "구글폼 설문 링크")
         private String survey;
 
-        @Schema(description = "게시글 마감일")
-        private String deadline;
+        @Schema(description = "게시글 시작일 (yyyy-MM-dd")
+        private String startDate;
 
-        @Schema(description = "게시글에 포함된 태그들의 이름")
-        private List<String> tags;
+        @Schema(description = "게시글 시작 시간 (HH:MM)")
+        private String startTime;
+
+        @Schema(description = "게시글 마감일 (yyyy-MM-dd)")
+        private String endDate;
+
+        @Schema(description = "게시글 마감 시간 (HH:MM)")
+        private String endTime;
+
+        @Schema(description = "실험자 이름 정보")
+        private String author;
+
+        @Schema(description = "게시글에 포함된 태그 요청 정보")
+        private List<TagDTO.TagRequest> tags;
+    }
+
+    @Data
+    @Builder
+    @Schema(description = "수행형 게시글 생성을 위한 요청 정보")
+    public static class createTaskRequest{
+        @NotBlank(message = "제목은 필수 항목입니다.")
+        @Schema(description = "게시글 생성을 위한 제목")
+        private String title;
+
+        @NotBlank(message = "내용은 필수 항목입니다.")
+        @Schema(description = "실험에 대한 자세한 정보")
+        private String content;
+
+        @NotNull(message = "게시글 형태는 필수 항목입니다.")
+        @Schema(description = "게시글의 속성 \"Survey\" 혹은 \"Task\" 을 입력해야 합니다.")
+        private PostType postType;
+
+        @Schema(description = "게시글 시작일 (yyyy-MM-dd")
+        private String startDate;
+
+        @Schema(description = "게시글 시작 시간 (HH:MM)")
+        private String startTime;
+
+        @Schema(description = "게시글 마감일 (yyyy-MM-dd)")
+        private String endDate;
+
+        @Schema(description = "게시글 마감 시간 (HH:MM)")
+        private String endTime;
+
+        @Schema(description = "실험자 이름 정보")
+        private String author;
+
+        @Schema(description = "지급되는 급여 정보")
+        private Long payment;
+
+        @Schema(description = "실험이 진행되는 주소 정보")
+        private String address;
+
+        @Schema(description = "게시글에 포함된 태그 요청 정보")
+        private List<TagDTO.TagRequest> tags;
     }
 
     @Data
     @Builder
     @Schema(description = "게시글 생성 응답")
-    public static class createResponse {
+    public static class createSurveyResponse {
         private long id;
         private String title;
         private String content;
         private PostType postType;
         private String survey;
-        private String deadline;
+        private String startDate;
+        private String startTime;
+        private String endDate;
+        private String endTime;
+        private String author;
         private String timestamp;
-        private List<String> tags;
+        private List<TagDTO.TagRequest> tags;
+    }
+
+    @Data
+    @Builder
+    @Schema(description = "게시글 생성 응답")
+    public static class createTaskResponse {
+        private long id;
+        private String title;
+        private String content;
+        private PostType postType;
+        private String startDate;
+        private String startTime;
+        private String endDate;
+        private String endTime;
+        private String author;
+        private Long payment;
+        private String address;
+        private String timestamp;
+        private List<TagDTO.TagRequest> tags;
     }
 
     @Data
@@ -59,15 +136,39 @@ public class PostDTO {
     }
 
     @Data
+    @Builder
     @Schema(description = "특정 게시글 조회 응답")
-    public static class getPostResponse{
+    public static class getSurveyPostResponse{
         private long id;
         private String title;
         private String content;
         private PostType postType;
         private String survey;
-        private String deadline;
-        private List<String> tags;
+        private String startDate;
+        private String startTime;
+        private String endDate;
+        private String endTime;
+        private List<TagDTO.TagRequest> tags;
+
+        @Schema(description = "게시글 작성자")
+        private String author;
+    }
+
+    @Data
+    @Builder
+    @Schema(description = "특정 게시글 조회 응답")
+    public static class getTaskPostResponse{
+        private long id;
+        private String title;
+        private String content;
+        private PostType postType;
+        private String startDate;
+        private String startTime;
+        private String endDate;
+        private String endTime;
+        private Long payment;
+        private String address;
+        private List<TagDTO.TagRequest> tags;
 
         @Schema(description = "게시글 작성자")
         private String author;
@@ -92,7 +193,7 @@ public class PostDTO {
             private long id;
             private String title;
             private PostType postType;
-            private List<String> tags;
+            private List<TagDTO.TagRequest> tags;
         }
     }
 }

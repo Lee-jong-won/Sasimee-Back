@@ -2,6 +2,7 @@ package com.example.Sasimee_Back.controller;
 
 import com.example.Sasimee_Back.dto.PostDTO;
 import com.example.Sasimee_Back.dto.SasimeePrincipal;
+import com.example.Sasimee_Back.entity.PostType;
 import com.example.Sasimee_Back.service.PostService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -21,25 +22,49 @@ public class PostController {
     private final PostService postService;
 
     //Create Post Function
-    @PostMapping("/create")
+    @PostMapping("/create/survey")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시글 등록 성공"),
-            @ApiResponse(responseCode = "400", description = "게시글 등록 실패")
+            @ApiResponse(responseCode = "200", description = "설문형 게시글 등록 성공"),
+            @ApiResponse(responseCode = "400", description = "설문형 게시글 등록 실패")
     })
-    public ResponseEntity<PostDTO.createResponse> post(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @Valid @RequestBody PostDTO.createRequest createRequest) {
+    public ResponseEntity<PostDTO.createSurveyResponse> surveyPost(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @Valid @RequestBody PostDTO.createSurveyRequest createRequest) {
         String userEmail = sasimeePrincipal.getUseremail();
-        PostDTO.createResponse response = postService.createPost(userEmail, createRequest);
+        PostDTO.createSurveyResponse response = postService.createSurveyPost(userEmail, createRequest);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    //Search Post (by ID)
-    @GetMapping("/{postId}")
+    //Create Post Function
+    @PostMapping("/create/task")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "게시글 ID 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "게시글 ID 조회 실패")
+            @ApiResponse(responseCode = "200", description = "수행형 게시글 등록 성공"),
+            @ApiResponse(responseCode = "400", description = "수행형 게시글 등록 실패")
     })
-    public ResponseEntity<PostDTO.getPostResponse> getPostById(@PathVariable Long postId) {
-        PostDTO.getPostResponse response = postService.getPostById(postId);
+    public ResponseEntity<PostDTO.createTaskResponse> taskPost(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @Valid @RequestBody PostDTO.createTaskRequest createRequest) {
+        String userEmail = sasimeePrincipal.getUseremail();
+        PostDTO.createTaskResponse response = postService.createTaskPost(userEmail, createRequest);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+
+    //Search Post (by ID)
+    @GetMapping("/survey/{postId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "설문형 게시글 ID 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "설문형 게시글 ID 조회 실패")
+    })
+    public ResponseEntity<PostDTO.getSurveyPostResponse> getSurveyPostById(@PathVariable Long postId) {
+        PostDTO.getSurveyPostResponse response = postService.getSurveyPostById(postId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    //Search Post (by ID)
+    @GetMapping("/task/{postId}")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "수행형 게시글 ID 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "수행형 게시글 ID 조회 실패")
+    })
+    public ResponseEntity<PostDTO.getTaskPostResponse> getTaskPostById(@PathVariable Long postId) {
+        PostDTO.getTaskPostResponse response = postService.getTaskPostById(postId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -49,20 +74,21 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "태그를 포함한 게시글들 조회 성공"),
             @ApiResponse(responseCode = "400", description = "태그를 포함한 게시글들 조회 실패")
     })
-    public ResponseEntity<PostDTO.getAllPostResponse> getPostByTag(@PathVariable String tagName) {
-        PostDTO.getAllPostResponse response = postService.getPostByTag(tagName);
+    public ResponseEntity<PostDTO.getAllPostResponse> getPostByTag(@PathVariable String tagName, @PathVariable PostType postType) {
+        PostDTO.getAllPostResponse response = postService.getPostByTag(tagName, postType);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //Search All Posts (with Paging)
-    @GetMapping
+    @GetMapping("/{postType}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "페이징을 통한 게시글들 조회 성공"),
             @ApiResponse(responseCode = "400", description = "페이징을 통한 게시글들 조회 실패")
     })
     public  ResponseEntity<PostDTO.getAllPostResponse> getAllPosts(@RequestParam(defaultValue = "0") int page,
-                                                                         @RequestParam(defaultValue = "10") int size) {
-        PostDTO.getAllPostResponse response = postService.getAllPosts(page, size);
+                                                                         @RequestParam(defaultValue = "10") int size,
+                                                                   @PathVariable PostType postType) {
+        PostDTO.getAllPostResponse response = postService.getAllPosts(page, size, postType);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

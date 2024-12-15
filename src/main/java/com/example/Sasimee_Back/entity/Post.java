@@ -35,8 +35,23 @@ public class Post {
     private String survey;
 
     @Column(nullable = false)
-    private String deadline;
+    private String startDate;
 
+    @Column(nullable = false)
+    private String startTime;
+
+    @Column(nullable = false)
+    private String endDate;
+
+    @Column(nullable = false)
+    private String endTime;
+
+    @Column(nullable = false)
+    private String author;
+
+    private Long payment;
+
+    private String address;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)

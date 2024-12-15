@@ -2,6 +2,7 @@ package com.example.Sasimee_Back.controller;
 
 import com.example.Sasimee_Back.dto.PostDTO;
 import com.example.Sasimee_Back.dto.SasimeePrincipal;
+import com.example.Sasimee_Back.entity.PostType;
 import com.example.Sasimee_Back.service.ClickHistoryService;
 import com.example.Sasimee_Back.service.PostService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,15 +34,15 @@ public class ClickHistoryController {
             return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/recommend")
+    @GetMapping("/{postType}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "클릭 기록 기반 게시글들 추천 성공"),
             @ApiResponse(responseCode = "400", description = "클릭 기록 기반 게시글들 추천 실패")
     })
-    public ResponseEntity<Object> recommendByHistory(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
+    public ResponseEntity<Object> recommendByHistory(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @PathVariable PostType postType) {
             try{
                 List<String> topTags = clickHistoryService.recommender(sasimeePrincipal.getUseremail());
-                PostDTO.getAllPostResponse posts = postService.getPostByTag(topTags.get(0));
+                PostDTO.getAllPostResponse posts = postService.getPostByTag(topTags.get(0), postType);
                 return ResponseEntity.ok(posts);
             }catch (Exception e){
                 return ResponseEntity.status(400).body("추천 게시글을 가져오지 못했습니다." + e.getMessage());
