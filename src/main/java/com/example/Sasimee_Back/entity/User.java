@@ -28,12 +28,12 @@ public class User {
 
     @Enumerated(EnumType.STRING) // Enum 값을 문자열로 저장
     @Column(nullable = false)
-    private Gender gender;
+    //private Gender gender;
 
     private String name;
     private String phoneNumber;
-    private String address;
-    private String birth;
+    //private String address;
+    //private String birth;
 
     @ManyToMany
     @JoinTable(

@@ -40,9 +40,9 @@ public class UserDTO {
         @NotBlank(message = "확인을 위한 비밀번호는 필수 항목입니다.")
         private String password2;
 
-        @Schema(example = "성별")
-        @NotBlank(message = "성별 정보는 필수 항목입니다.")
-        private String gender;
+        //@Schema(example = "성별")
+        //@NotBlank(message = "성별 정보는 필수 항목입니다.")
+        //private String gender;
 
         @Schema(example = "이름")
         @NotBlank(message = "이름은 필수 항목입니다.")
@@ -52,13 +52,13 @@ public class UserDTO {
         @NotBlank(message = "전화번호는 필수 항목입니다.")
         private String phoneNumber;
 
-        @Schema(example = "주소")
-        @NotBlank(message = "주소는 필수 항목입니다.")
-        private String address;
+        //@Schema(example = "주소")
+        //@NotBlank(message = "주소는 필수 항목입니다.")
+        //private String address;
 
-        @Schema(example = "생년월일")
-        @NotBlank(message = "주소는 필수 항목입니다.")
-        private String birth;
+        //@Schema(example = "생년월일")
+        //@NotBlank(message = "주소는 필수 항목입니다.")
+        //private String birth;
 
         @Schema(example="태그")
         @NotBlank(message = "주소는 태그는 필수 항목입니다.")
@@ -68,10 +68,10 @@ public class UserDTO {
         {
             return User.builder().name(registerRequest.name)
                     .email(registerRequest.email)
-                    .gender(Gender.fromString(registerRequest.gender))
-                    .address(registerRequest.address)
+                    //gender(Gender.fromString(registerRequest.gender))
+                    //.address(registerRequest.address)
                     .phoneNumber(registerRequest.phoneNumber)
-                    .birth(registerRequest.birth)
+                    //.birth(registerRequest.birth)
                     .encryptPassword(registerRequest.password1)
                     .build();
         }
