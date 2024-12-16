@@ -45,7 +45,7 @@ public class PostDTO {
         @Schema(description = "실험자 이름 정보", example = "가천대학교 연구팀")
         private String author;
 
-        @Schema(description = "게시글에 포함된 태그 요청 정보")
+        @Schema(description = "게시글에 포함된 태그 요청 정보", example = "[{\"name\": \"여성\", \"category\": \"GENDER\"}]")
         private List<TagDTO.TagRequest> tags;
 
         @Data
@@ -96,7 +96,7 @@ public class PostDTO {
         @Schema(description = "실험이 진행되는 주소 정보", example = "경기도 성남시 수정구 성남대로 1342")
         private String address;
 
-        @Schema(description = "게시글에 포함된 태그 요청 정보")
+        @Schema(description = "게시글에 포함된 태그 요청 정보", example = "[{\"name\": \"여성\", \"category\": \"GENDER\"}]")
         private List<TagDTO.TagRequest> tags;
 
         @Data
@@ -212,7 +212,7 @@ public class PostDTO {
             private List<TagDTO.TagRequest> tags;
 
             @Data
-            @Schema(description = "태그 요청 객체")
+            @Schema(description = "게시글에 포함된 태그 요청 정보", example = "[{\"name\": \"여성\", \"category\": \"GENDER\"}]")
             public static class TagRequest{
                 @Schema(description = "태그 이름", example = "여성")
                 private String name;
@@ -248,7 +248,7 @@ public class PostDTO {
         @Schema(description = "게시글 마감 시간", example = "12:30")
         private String endTime;
 
-        @Schema(description = "게시글에 포함된 태그 요청 정보")
+        @Schema(description = "게시글에 포함된 태그 요청 정보", example = "[{\"name\": \"여성\", \"category\": \"GENDER\"}]")
         private List<TagDTO.TagRequest> tags;
 
         @Data
