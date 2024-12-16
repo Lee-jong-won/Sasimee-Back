@@ -4,6 +4,8 @@ import com.example.Sasimee_Back.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -32,6 +34,14 @@ public class User {
     private String phoneNumber;
     private String address;
     private String birth;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_tags",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<UserTag> tags;
 
     public void addUserAuthority(){
         this.role = Role.ROLE_USER;

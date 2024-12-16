@@ -9,7 +9,9 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tag {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "context_type") // context_type 컬럼 추가
+public abstract class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -43,6 +43,7 @@ public class EmailService {
                     .build();
 
         } catch (Exception e) {
+            log.info("message={}", e);
             log.info("Failed to send Email");
 
             return EmailDTO.SentResponse.builder()

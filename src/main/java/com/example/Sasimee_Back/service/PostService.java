@@ -6,7 +6,7 @@ import com.example.Sasimee_Back.dto.TagDTO;
 import com.example.Sasimee_Back.entity.*;
 import com.example.Sasimee_Back.repository.ClearHistoryRepository;
 import com.example.Sasimee_Back.repository.PostRepository;
-import com.example.Sasimee_Back.repository.TagRepository;
+import com.example.Sasimee_Back.repository.PostTagRepository;
 import com.example.Sasimee_Back.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +24,13 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
     private final UserRepository userRepository;
     private final ClearHistoryRepository clearHistoryRepository;
 
     @Transactional
     public PostDTO.createSurveyResponse createSurveyPost(String userEmail, PostDTO.createSurveyRequest createRequest){
         User user = userRepository.findByEmail(userEmail).orElse(null);
-
-        List<Tag> tags = createRequest.getTags().stream()
-                .map(tagRequest -> tagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
-                        .orElseGet(() -> tagRepository.save(new Tag(tagRequest.getName(), tagRequest.getCategory()))))
-                .collect(Collectors.toList());
 
         Post post = Post.builder()
                 .title(createRequest.getTitle())
@@ -47,10 +42,15 @@ public class PostService {
                 .endDate(createRequest.getEndDate())
                 .endTime(createRequest.getEndTime())
                 .author(createRequest.getAuthor())
-                .tags(tags)
                 .user(user)
                 .build();
 
+
+        List<PostTag> tags = createRequest.getTags().stream()
+                .map(tagRequest -> postTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
+                        .orElseGet(() -> postTagRepository.save(new PostTag(tagRequest.getName(), tagRequest.getCategory(), post))))
+                .collect(Collectors.toList());
+        post.setTags(tags);
         Post savedPost = postRepository.save(post);
 
         return PostDTO.createSurveyResponse.builder()
@@ -73,11 +73,6 @@ public class PostService {
     public PostDTO.createTaskResponse createTaskPost(String userEmail, PostDTO.createTaskRequest createRequest){
         User user = userRepository.findByEmail(userEmail).orElse(null);
 
-        List<Tag> tags = createRequest.getTags().stream()
-                .map(tagRequest -> tagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
-                        .orElseGet(() -> tagRepository.save(new Tag(tagRequest.getName(), tagRequest.getCategory()))))
-                .collect(Collectors.toList());
-
         Post post = Post.builder()
                 .title(createRequest.getTitle())
                 .content(createRequest.getContent())
@@ -89,10 +84,14 @@ public class PostService {
                 .author(createRequest.getAuthor())
                 .payment(createRequest.getPayment())
                 .address(createRequest.getAddress())
-                .tags(tags)
                 .user(user)
                 .build();
 
+        List<PostTag> tags = createRequest.getTags().stream()
+                .map(tagRequest -> postTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
+                        .orElseGet(() -> postTagRepository.save(new PostTag(tagRequest.getName(), tagRequest.getCategory(), post))))
+                .collect(Collectors.toList());
+        post.setTags(tags);
         Post savedPost = postRepository.save(post);
 
         return PostDTO.createTaskResponse.builder()
