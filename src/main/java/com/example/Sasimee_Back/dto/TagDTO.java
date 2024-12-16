@@ -1,5 +1,6 @@
 package com.example.Sasimee_Back.dto;
 
+import com.example.Sasimee_Back.entity.Tag;
 import com.example.Sasimee_Back.entity.TagCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -18,4 +19,8 @@ public class TagDTO {
         private String name;
         private TagCategory category;
     }
+
+
+
+
 }

@@ -62,9 +62,13 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tag> tags;
+    private List<PostTag> tags;
 
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    public void setTags(List<PostTag> tags){
+        this.tags = tags;
+    }
 }

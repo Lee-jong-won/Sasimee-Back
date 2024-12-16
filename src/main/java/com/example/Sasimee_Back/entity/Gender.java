@@ -13,6 +13,7 @@ public enum Gender {
         this.gender = gender;
     }
 
+
     public static Gender fromString(String value) {
         if ("male".equalsIgnoreCase(value)) {
             return M;

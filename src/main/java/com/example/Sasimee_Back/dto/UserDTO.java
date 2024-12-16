@@ -7,8 +7,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
+
+
+import java.util.List;
 
 public class UserDTO {
     @Data
@@ -58,6 +59,10 @@ public class UserDTO {
         @Schema(example = "생년월일")
         @NotBlank(message = "주소는 필수 항목입니다.")
         private String birth;
+
+        @Schema(example="태그")
+        @NotBlank(message = "주소는 태그는 필수 항목입니다.")
+        private List<TagDTO> tagDTOs;
 
         public static User toEntity(UserDTO.registerRequest registerRequest)
         {
