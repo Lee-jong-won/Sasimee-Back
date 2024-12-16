@@ -16,7 +16,10 @@ public class TagDTO {
     @AllArgsConstructor
     @Schema(description = "태그 저장 및 조회를 위한 정보")
     public static class TagRequest{
+        @Schema(description = "태그 이름", example = "여성")
         private String name;
+
+        @Schema(description = "태그 이름", example = "GENDER")
         private TagCategory category;
     }
 

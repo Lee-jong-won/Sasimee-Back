@@ -294,8 +294,14 @@ public class PostService {
         if (request.getStartDate() != null) {
             post.setStartDate(request.getStartDate());
         }
+        if(request.getStartTime() != null){
+            post.setStartTime(request.getStartTime());
+        }
         if (request.getEndDate() != null) {
             post.setEndDate(request.getEndDate());
+        }
+        if(request.getEndTime() != null){
+            post.setEndTime(request.getEndTime());
         }
         if (request.getTags() != null) {
             List<PostTag> newTags = request.getTags().stream()
