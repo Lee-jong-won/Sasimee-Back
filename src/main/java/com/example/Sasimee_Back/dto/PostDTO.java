@@ -196,4 +196,44 @@ public class PostDTO {
             private List<TagDTO.TagRequest> tags;
         }
     }
+
+    @Data
+    @Schema(description = "게시글 수정 요청 공통 정보")
+    public abstract static class AbstractPostUpdateRequest {
+        @NotNull(message = "수정할 게시글의 ID는 필수 항목입니다.")
+        @Schema(description = "게시글 ID")
+        private Long id;
+
+        @Schema(description = "게시글 제목")
+        private String title;
+
+        @Schema(description = "게시글 내용")
+        private String content;
+
+        @Schema(description = "게시글 시작일 (yyyy-MM-dd)")
+        private String startDate;
+
+        @Schema(description = "게시글 마감일 (yyyy-MM-dd)")
+        private String endDate;
+
+        @Schema(description = "게시글에 포함된 태그 요청 정보")
+        private List<TagDTO.TagRequest> tags;
+    }
+
+    @Data
+    @Schema(description = "설문형 게시글 수정 요청")
+    public static class UpdateSurveyRequest extends AbstractPostUpdateRequest {
+        @Schema(description = "구글 폼 링크")
+        private String survey;
+    }
+
+    @Data
+    @Schema(description = "수행형 게시글 수정 요청")
+    public static class UpdateTaskRequest extends AbstractPostUpdateRequest {
+        @Schema(description = "지급되는 급여 정보")
+        private Long payment;
+
+        @Schema(description = "실험이 진행되는 주소 정보")
+        private String address;
+    }
 }

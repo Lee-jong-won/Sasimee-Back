@@ -244,6 +244,71 @@ public class PostService {
                 .build();
     }
 
+    @Transactional
+    public void updateSurveyPost(PostDTO.UpdateSurveyRequest request){
+        Post post = postRepository.findById(request.getId())
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        if(post.getType() != PostType.S){
+            throw new IllegalArgumentException("Survey 게시글만 수정할 수 있습니다.");
+        }
+
+        updateCommonField(post, request);
+
+        if(request.getSurvey() != null){
+            post.setSurvey(request.getSurvey());
+        }
+
+        postRepository.save(post);
+    }
+
+    @Transactional
+    public void updateTaskPost(PostDTO.UpdateTaskRequest request){
+        Post post = postRepository.findById(request.getId())
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        if(post.getType() != PostType.T){
+            throw new IllegalArgumentException("Task 게시글만 수정할 수 있습니다.");
+        }
+
+        updateCommonField(post, request);
+
+        if(request.getPayment() != null){
+            post.setPayment(request.getPayment());
+        }
+
+        if(request.getAddress() != null){
+            post.setAddress(request.getAddress());
+        }
+
+        postRepository.save(post);
+    }
+
+    public void updateCommonField(Post post, PostDTO.AbstractPostUpdateRequest request){
+        if (request.getTitle() != null) {
+            post.setTitle(request.getTitle());
+        }
+        if (request.getContent() != null) {
+            post.setContent(request.getContent());
+        }
+        if (request.getStartDate() != null) {
+            post.setStartDate(request.getStartDate());
+        }
+        if (request.getEndDate() != null) {
+            post.setEndDate(request.getEndDate());
+        }
+        if (request.getTags() != null) {
+            List<PostTag> newTags = request.getTags().stream()
+                    .map(tagRequest -> postTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
+                            .orElseGet(() -> postTagRepository.save(new PostTag(tagRequest.getName(), tagRequest.getCategory(), post))))
+                    .collect(Collectors.toList());
+
+            post.getTags().clear();
+            post.getTags().addAll(newTags);
+        }
+
+    }
+
     public void deletePost(String userEmail, Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("해당 포스트는 존재하지 않습니다."));
