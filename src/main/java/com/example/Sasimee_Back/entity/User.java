@@ -46,15 +46,8 @@ public class User {
     public void addUserAuthority(){
         this.role = Role.ROLE_USER;
     }
-
-
-    public static UserDTO.registerResponse toRegisterResponseDTO(User user)
-    {
-        return UserDTO.registerResponse.builder()
-                .status(true)
-                .message("회원가입이 성공적으로 완료되었습니다!")
-                .build();
+    public void setTags(List<UserTag> tags){
+        this.tags = tags;
     }
-
 
 }
