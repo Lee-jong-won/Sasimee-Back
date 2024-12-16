@@ -33,7 +33,7 @@ public class ClearHistoryController {
     }
 
     @Operation(summary = "완수한 게시글 조회", description = "유저가 완수한 설문형, 수행형 게시글 요약 정보 전체 조회")
-    @GetMapping
+    @GetMapping("/get")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "수행한 게시글들 전체 조회 성공"),
             @ApiResponse(responseCode = "400", description = "수행한 게시글들 전체 조회 실패")

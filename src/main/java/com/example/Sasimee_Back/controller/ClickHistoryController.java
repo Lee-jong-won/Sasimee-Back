@@ -37,7 +37,7 @@ public class ClickHistoryController {
     }
 
     @Operation(summary = "설문형 게시글 추천", description = "게시글 클릭 기록 기반 게시글 추천")
-    @GetMapping("/survey")
+    @GetMapping("/get/survey")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "클릭 기록 기반 게시글들 추천 성공"),
             @ApiResponse(responseCode = "400", description = "클릭 기록 기반 게시글들 추천 실패")
@@ -54,7 +54,7 @@ public class ClickHistoryController {
     }
 
     @Operation(summary = "수행형 게시글 추천", description = "게시글 클릭 기록 기반 게시글 추천")
-    @GetMapping("/task")
+    @GetMapping("/get/task")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "클릭 기록 기반 게시글들 추천 성공"),
             @ApiResponse(responseCode = "400", description = "클릭 기록 기반 게시글들 추천 실패")

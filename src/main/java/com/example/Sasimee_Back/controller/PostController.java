@@ -177,7 +177,7 @@ public class PostController {
 
     //Delete Post (by ID)
     @Operation(summary = "게시글 삭제", description = "게시글 ID를 통한 게시글 삭제")
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/delete/{postId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "ID 기반 게시글 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "ID 기반 게시글 삭제 실패")
