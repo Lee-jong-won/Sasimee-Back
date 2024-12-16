@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -170,6 +171,28 @@ public class PostService {
                 .payment(post.getPayment())
                 .tags(tags)
                 .build();
+    }
+
+    public PostDTO.getAllPostResponse getPostByUser(String userEmail){
+        User user = userRepository.findByEmail(userEmail).orElse(null);
+        List<Post> posts = postRepository.findByUser(user);
+
+        List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
+                .map(post -> {
+                    List<TagDTO.TagRequest> tags = post.getTags().stream()
+                            .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
+                            .collect(Collectors.toList());
+
+                    return PostDTO.getAllPostResponse.PostSummary.builder()
+                            .id(post.getId())
+                            .title(post.getTitle())
+                            .postType(post.getType())
+                            .tags(tags)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return PostDTO.getAllPostResponse.builder().posts(postSummaries).build();
     }
 
     public PostDTO.getAllPostResponse getPostByTag(String tagName, PostType postType){

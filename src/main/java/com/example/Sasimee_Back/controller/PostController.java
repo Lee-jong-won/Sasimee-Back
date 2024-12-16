@@ -2,7 +2,9 @@ package com.example.Sasimee_Back.controller;
 
 import com.example.Sasimee_Back.dto.PostDTO;
 import com.example.Sasimee_Back.dto.SasimeePrincipal;
+import com.example.Sasimee_Back.entity.Post;
 import com.example.Sasimee_Back.entity.PostType;
+import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -108,6 +110,18 @@ public class PostController {
     })
     public ResponseEntity<PostDTO.getAllPostResponse> getPostByTag( @PathVariable PostType postType, @PathVariable String tagName) {
         PostDTO.getAllPostResponse response = postService.getPostByTag(tagName, postType);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(summary = "현재 로그인한 유저가 작성한 게시글 조회", description = "유저가 작성한 게시글들에 대한 요약 정보 전체 조회")
+    @GetMapping("/get/user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "유저가 작성한 게시글들 요약 정보 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "유저가 작성한 게시글들 요약 정보 조회 실패")
+    })
+    public ResponseEntity<PostDTO.getAllPostResponse> getPostByUser(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
+        String userEmail = sasimeePrincipal.getUsername();
+        PostDTO.getAllPostResponse response = postService.getPostByUser(userEmail);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
