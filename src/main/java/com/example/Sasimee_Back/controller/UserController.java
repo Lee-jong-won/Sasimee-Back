@@ -8,6 +8,7 @@ import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.service.EmailAuthService;
 import com.example.Sasimee_Back.service.UserAuthService;
 import com.example.Sasimee_Back.service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,7 +16,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/user")
@@ -91,7 +94,14 @@ public class UserController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<TokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(userAuthService.reissue(tokenRequestDto));
+    public ResponseEntity<?> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+        try {
+            TokenDto tokenDto = userAuthService.reissue(tokenRequestDto);
+            return ResponseEntity.ok(tokenDto);
+        } catch (ExpiredJwtException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
 }
