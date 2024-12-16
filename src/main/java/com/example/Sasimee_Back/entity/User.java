@@ -26,8 +26,8 @@ public class User {
     @Setter
     private String encryptPassword;
 
-    @Enumerated(EnumType.STRING) // Enum 값을 문자열로 저장
-    @Column(nullable = false)
+    //@Enumerated(EnumType.STRING) // Enum 값을 문자열로 저장
+    //@Column(nullable = false)
     //private Gender gender;
 
     private String name;
