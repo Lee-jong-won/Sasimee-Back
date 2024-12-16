@@ -18,7 +18,7 @@ public abstract class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique=true)
+    @Column
     private String name;
 
     @ManyToMany(mappedBy = "tags")
