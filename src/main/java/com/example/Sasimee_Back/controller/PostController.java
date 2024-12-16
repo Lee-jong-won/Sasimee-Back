@@ -27,10 +27,23 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "설문형 게시글 등록 성공"),
             @ApiResponse(responseCode = "400", description = "설문형 게시글 등록 실패")
     })
-    public ResponseEntity<PostDTO.createSurveyResponse> surveyPost(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @Valid @RequestBody PostDTO.createSurveyRequest createRequest) {
+    public ResponseEntity<?> surveyPost(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @Valid @RequestBody PostDTO.createSurveyRequest createRequest) {
         String userEmail = sasimeePrincipal.getUsername();
-        PostDTO.createSurveyResponse response = postService.createSurveyPost(userEmail, createRequest);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        if(createRequest.getPostType() == PostType.S){
+            PostDTO.createSurveyResponse response = postService.createSurveyPost(userEmail, createRequest);
+            if (response.getSurvey() != null){
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+            }else{
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("{\"message\": \"설문 주소가 포함되어있는지 한 번 더 확인해주세요.\"}");
+            }
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("{\"message\": \"postType이 Survey인지 한 번 더 확인해주세요.\"}");
+        }
     }
 
     //Create Post Function
@@ -39,10 +52,23 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "수행형 게시글 등록 성공"),
             @ApiResponse(responseCode = "400", description = "수행형 게시글 등록 실패")
     })
-    public ResponseEntity<PostDTO.createTaskResponse> taskPost(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @Valid @RequestBody PostDTO.createTaskRequest createRequest) {
+    public ResponseEntity<?> taskPost(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @Valid @RequestBody PostDTO.createTaskRequest createRequest) {
         String userEmail = sasimeePrincipal.getUsername();
-        PostDTO.createTaskResponse response = postService.createTaskPost(userEmail, createRequest);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        if(createRequest.getPostType() == PostType.T){
+            PostDTO.createTaskResponse response = postService.createTaskPost(userEmail, createRequest);
+            if (response.getAddress() != null && response.getPayment() != null){
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+            }else{
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("{\"message\": \"급여나 주소가 포함되어있는지 한 번 더 확인해주세요.\"}");
+            }
+        }else{
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("{\"message\": \"postType이 Task인지 한 번 더 확인해주세요.\"}");
+        }
     }
 
 
