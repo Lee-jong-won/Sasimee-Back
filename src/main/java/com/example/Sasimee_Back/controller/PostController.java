@@ -140,7 +140,7 @@ public class PostController {
     }
 
     @Operation(summary = "설문형 게시글 수정", description = "게시글 ID를 포함한 정보로 설문형 게시글 수정")
-    @GetMapping("/update/survey")
+    @PutMapping("/update/survey")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "설문형 게시글 업데이트 성공"),
             @ApiResponse(responseCode = "400", description = "설문형 게시글 업데이트 실패")
@@ -151,7 +151,7 @@ public class PostController {
     }
 
     @Operation(summary = "수행형 게시글 수정", description = "게시글 ID를 포함한 정보로 수행형 게시글 수정")
-    @GetMapping("/update/task")
+    @PutMapping("/update/task")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "수행형 게시글 업데이트 성공"),
             @ApiResponse(responseCode = "400", description = "수행형 게시글 업데이트 실패")
