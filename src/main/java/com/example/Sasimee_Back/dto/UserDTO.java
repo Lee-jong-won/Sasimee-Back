@@ -62,7 +62,7 @@ public class UserDTO {
 
         @Schema(example="태그")
         @NotBlank(message = "주소는 태그는 필수 항목입니다.")
-        private List<TagDTO> tagDTOs;
+        private List<TagDTO.TagRequest> tags;
 
         public static User toEntity(UserDTO.registerRequest registerRequest)
         {

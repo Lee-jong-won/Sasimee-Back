@@ -50,6 +50,8 @@ public class UserController {
                         .build());
 
         UserDTO.registerResponse registerResponse = userService.register(registerRequest);
+        emailAuthService.deleteVerificatedEmailInfo(registerRequest.getEmail());
+
 
         return ResponseEntity.ok(registerResponse);
     }

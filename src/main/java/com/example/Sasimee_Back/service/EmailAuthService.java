@@ -31,6 +31,12 @@ public class EmailAuthService {
         emailVerificationRepository.deleteData(key);
     }
 
+    public void deleteVerificatedEmailInfo(String email)
+    {
+        String key = VERIFICATED_EMAIL_INFO + email;
+        emailVerificationRepository.deleteData(key);
+    }
+
     public boolean verifyEmail(String email, String verificationCode)
     {
         String key = VERIFICATION_CODE_FEY_PREFIX + email;
@@ -53,7 +59,6 @@ public class EmailAuthService {
         boolean isAuthenticated = emailVerificationRepository.existData(emailkey);
 
         if(isAuthenticated) {
-            emailVerificationRepository.deleteData(emailkey);
             return true;
         }
         else
