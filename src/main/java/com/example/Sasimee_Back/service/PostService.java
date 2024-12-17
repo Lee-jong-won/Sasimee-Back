@@ -161,15 +161,15 @@ public class PostService {
 
         List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
                 .map(post -> {
-                    List<TagDTO.TagRequest> tags = post.getTags().stream()
-                            .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
+                    List<String> tagName = post.getTags().stream()
+                            .map(PostTag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
                             .id(post.getId())
                             .title(post.getTitle())
                             .postType(post.getType())
-                            .tags(tags)
+                            .tagName(tagName)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -182,15 +182,15 @@ public class PostService {
 
         List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
                 .map(post -> {
-                    List<TagDTO.TagRequest> tags = post.getTags().stream()
-                            .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
+                    List<String> tagNames = post.getTags().stream()
+                            .map(PostTag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
                             .id(post.getId())
                             .title(post.getTitle())
                             .postType(post.getType())
-                            .tags(tags)
+                            .tagName(tagNames)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -206,15 +206,15 @@ public class PostService {
                 .map(clearHistory -> {
                     Post post = clearHistory.getPost();
 
-                    List<TagDTO.TagRequest> tags = post.getTags().stream()
-                            .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
+                    List<String> tagName = post.getTags().stream()
+                            .map(PostTag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
                             .id(post.getId())
                             .title(post.getTitle())
                             .postType(post.getType())
-                            .tags(tags)
+                            .tagName(tagName)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -228,15 +228,15 @@ public class PostService {
 
         List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
                 .map(post -> {
-                    List<TagDTO.TagRequest> tags = post.getTags().stream()
-                            .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
+                    List<String> tagName = post.getTags().stream()
+                            .map(PostTag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
                             .id(post.getId())
                             .title(post.getTitle())
                             .postType(post.getType())
-                            .tags(tags)
+                            .tagName(tagName)
                             .build();
                 })
                 .collect(Collectors.toList());

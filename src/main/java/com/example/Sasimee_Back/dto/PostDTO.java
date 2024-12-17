@@ -201,17 +201,7 @@ public class PostDTO {
             private long id;
             private String title;
             private PostType postType;
-            private List<TagDTO.TagRequest> tags;
-
-            @Data
-            @Schema(description = "게시글에 포함된 태그 요청 정보", example = "[{\"name\": \"여성\", \"category\": \"GENDER\"}]")
-            public static class TagRequest{
-                @Schema(description = "태그 이름", example = "여성")
-                private String name;
-
-                @Schema(description = "태그 카테고리", example = "GENDER")
-                private String category;
-            }
+            private List<String> tagName;
         }
     }
 
