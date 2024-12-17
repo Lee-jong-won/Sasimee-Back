@@ -30,7 +30,9 @@ public class User {
     //@Column(nullable = false)
     //private Gender gender;
 
+    @Setter
     private String name;
+    @Setter
     private String phoneNumber;
     //private String address;
     //private String birth;

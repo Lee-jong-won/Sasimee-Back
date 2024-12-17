@@ -18,6 +18,7 @@ public abstract class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Setter
     @Column
     private String name;
 

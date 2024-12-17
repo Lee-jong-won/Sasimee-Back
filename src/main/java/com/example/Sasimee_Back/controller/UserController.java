@@ -1,13 +1,13 @@
 package com.example.Sasimee_Back.controller;
 
 
-import com.example.Sasimee_Back.dto.TokenDto;
-import com.example.Sasimee_Back.dto.TokenRequestDto;
-import com.example.Sasimee_Back.dto.UserDTO;
+import com.example.Sasimee_Back.dto.*;
 import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.service.EmailAuthService;
 import com.example.Sasimee_Back.service.UserAuthService;
 import com.example.Sasimee_Back.service.UserService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,14 +18,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/user")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "로그인 및 회원가입", description="로그인 및 회원가입을 위한 api들")
+@Tag(name = "로그인/회원가입, Mypage", description="로그인/회원가입 및 mypage에 필요한 api들")
 public class UserController {
 
     private final UserService userService;
@@ -39,11 +42,10 @@ public class UserController {
     })
     @PostMapping("/register")
     public ResponseEntity<UserDTO.registerResponse> registerController(
-            @RequestBody UserDTO.registerRequest registerRequest)
-    {
+            @RequestBody UserDTO.registerRequest registerRequest) {
         boolean isVerified = emailAuthService.verifyEmailAuthentication(registerRequest.getEmail());
 
-        if(isVerified == false) return ResponseEntity.badRequest().
+        if (isVerified == false) return ResponseEntity.badRequest().
                 body(UserDTO.registerResponse.builder()
                         .status(false)
                         .message("이메일 인증이 되지 않았습니다. 이메일 인증을 완료한 후 회원가입이 가능합니다.")
@@ -62,13 +64,12 @@ public class UserController {
             )
     })
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> loginController(@RequestBody UserDTO.loginRequest loginRequest)
-    {
+    public ResponseEntity<TokenDto> loginController(@RequestBody UserDTO.loginRequest loginRequest) {
         //중복 로그인 방지
 
         //아이디 또는 비밀번호가 틀린 경우 로그인 불가능
         TokenDto tokenDto = userAuthService.login(loginRequest);
-        if(tokenDto == null) return ResponseEntity.badRequest().build();
+        if (tokenDto == null) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(tokenDto);
     }
 
@@ -78,8 +79,7 @@ public class UserController {
             )
     })
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutController(HttpServletRequest request)
-    {
+    public ResponseEntity<?> logoutController(HttpServletRequest request) {
         // 1. request header에서 accessToken을 가져옴
         String accessToken = request.getHeader("Authorization");
 
@@ -106,4 +106,65 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
+
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "조회 실패"),
+            @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 선택한 태그 조회 성공"
+            )
+    })
+    @GetMapping("/mypage/tag")
+    public ResponseEntity<List<TagDTO.TagResponse>> getAllTags(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
+        String email = sasimeePrincipal.getUseremail();
+        List<TagDTO.TagResponse> tagResponses = userService.getAllUserTags(email);
+        return new ResponseEntity<>(tagResponses, HttpStatus.OK);
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "조회 실패"),
+            @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 입력한 프로필 정보 조회 성공"
+            )
+    })
+    @GetMapping("/mypage/profile")
+    public ResponseEntity<UserDTO.profileResponse> getUserProfile(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal)
+    {
+        String email = sasimeePrincipal.getUseremail();
+        UserDTO.profileResponse profileResponse = userService.getUserProfile(email);
+        return new ResponseEntity<>(profileResponse, HttpStatus.OK);
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "조회 실패"),
+            @ApiResponse(responseCode = "200", description = "프로필 업데이트 성공"
+            )
+    })
+    @PatchMapping("/mypage/profile/modifiy")
+    public ResponseEntity<?> modifyUserProfile(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestBody UserDTO.profileRequest profileRequest)
+    {
+        String email = sasimeePrincipal.getUseremail();
+        userService.modifyUserProfile(email, profileRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "조회 실패"),
+            @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 선택한 태그 업데이트 성공"
+            )
+    })
+    @PatchMapping("/mypage/tag/modify")
+    public ResponseEntity<?> modifyUserTag(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestBody
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "List of items",
+            required = true,
+            content = @io.swagger.v3.oas.annotations.media.Content(
+                    array = @ArraySchema(schema = @Schema(implementation = TagDTO.TagRequest.class))
+            )
+    ) List<TagDTO.TagRequest> tagRequests)
+    {
+        String email = sasimeePrincipal.getUseremail();
+        userService.modifyUserTag(email, tagRequests);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
