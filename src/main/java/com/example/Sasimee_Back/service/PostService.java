@@ -116,29 +116,11 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("해당 포스트는 존재하지 않습니다."));
 
-        User user = post.getUser();
-        String userName = user.getName();
-
-        if(userName == null){
-            throw new RuntimeException("유저의 이름을 조회할 수 없습니다.");
-        }
-
-        List<TagDTO.TagRequest> tags = post.getTags().stream()
-                .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
-                .collect(Collectors.toList());
-
         return PostDTO.getSurveyPostResponse.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .postType(post.getType())
+
                 .survey(post.getSurvey())
-                .startDate(post.getStartDate())
-                .startTime(post.getStartTime())
                 .endDate(post.getEndDate())
                 .endTime(post.getEndTime())
-                .author(post.getAuthor())
-                .tags(tags)
                 .build();
     }
 

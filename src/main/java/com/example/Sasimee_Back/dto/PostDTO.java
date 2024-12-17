@@ -159,17 +159,9 @@ public class PostDTO {
     @Builder
     @Schema(description = "특정 게시글 조회 응답")
     public static class getSurveyPostResponse{
-        private long id;
-        private String title;
-        private String content;
-        private PostType postType;
         private String survey;
-        private String startDate;
-        private String startTime;
         private String endDate;
         private String endTime;
-        private List<TagDTO.TagRequest> tags;
-        private String author;
     }
 
     @Data
