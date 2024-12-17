@@ -83,7 +83,7 @@ public class ClickHistoryService {
 
     private List<String> getUserTags(String userEmail){
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        List<UserTag> userTags = userTagRepository.findByUser(user);
+        List<UserTag> userTags = userTagRepository.findByUsers(user);
 
         return userTags.stream()
                 .map(UserTag::getName)

@@ -11,5 +11,5 @@ import java.util.Optional;
 
 public interface UserTagRepository extends JpaRepository<UserTag, Long> {
     Optional<UserTag> findByNameAndCategory(String name, TagCategory category);
-    List<UserTag> findByUser(@Param("user")User user);
+    List<UserTag> findByUsers(User user);
 }
