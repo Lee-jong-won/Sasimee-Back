@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.List;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +19,7 @@ public abstract class Tag {
     private long id;
 
     @Setter
+    @Column
     private String name;
 
     @ManyToMany(mappedBy = "tags")

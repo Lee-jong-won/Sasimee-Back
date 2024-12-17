@@ -4,6 +4,7 @@ import com.example.Sasimee_Back.dto.PostDTO;
 import com.example.Sasimee_Back.dto.SasimeePrincipal;
 import com.example.Sasimee_Back.service.ClearHistoryService;
 import com.example.Sasimee_Back.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,13 +14,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/clearHistory")
+@RequestMapping("/clear")
 @RequiredArgsConstructor
 @Tag(name = "수행 기록 관리", description="수행 기록 관리를 위한 api들")
 public class ClearHistoryController {
     private final ClearHistoryService clearHistoryService;
     private final PostService postService;
 
+    @Operation(summary = "완수한 게시글 저장", description = "유저가 완수한 설문형, 수행형 게시글 저장")
     @PostMapping("/save/{postId}")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "수행한 게시글 저장 성공"),
@@ -30,7 +32,8 @@ public class ClearHistoryController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
+    @Operation(summary = "완수한 게시글 조회", description = "유저가 완수한 설문형, 수행형 게시글 요약 정보 전체 조회")
+    @GetMapping("/get")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "수행한 게시글들 전체 조회 성공"),
             @ApiResponse(responseCode = "400", description = "수행한 게시글들 전체 조회 실패")

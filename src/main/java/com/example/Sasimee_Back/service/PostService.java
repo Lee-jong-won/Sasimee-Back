@@ -115,29 +115,11 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("해당 포스트는 존재하지 않습니다."));
 
-        User user = post.getUser();
-        String userName = user.getName();
-
-        if(userName == null){
-            throw new RuntimeException("유저의 이름을 조회할 수 없습니다.");
-        }
-
-        List<TagDTO.TagRequest> tags = post.getTags().stream()
-                .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
-                .collect(Collectors.toList());
-
         return PostDTO.getSurveyPostResponse.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .postType(post.getType())
+
                 .survey(post.getSurvey())
-                .startDate(post.getStartDate())
-                .startTime(post.getStartTime())
                 .endDate(post.getEndDate())
                 .endTime(post.getEndTime())
-                .author(post.getAuthor())
-                .tags(tags)
                 .build();
     }
 
@@ -172,20 +154,42 @@ public class PostService {
                 .build();
     }
 
-    public PostDTO.getAllPostResponse getPostByTag(String tagName, PostType postType){
-        List<Post> posts = postRepository.findByTagsNameAndType(tagName, postType);
+    public PostDTO.getAllPostResponse getPostByUser(String userEmail){
+        User user = userRepository.findByEmail(userEmail).orElse(null);
+        List<Post> posts = postRepository.findByUser(user);
 
         List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
                 .map(post -> {
-                    List<TagDTO.TagRequest> tags = post.getTags().stream()
-                            .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
+                    List<String> tagName = post.getTags().stream()
+                            .map(PostTag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
                             .id(post.getId())
                             .title(post.getTitle())
                             .postType(post.getType())
-                            .tags(tags)
+                            .tagName(tagName)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return PostDTO.getAllPostResponse.builder().posts(postSummaries).build();
+    }
+
+    public PostDTO.getAllPostResponse getPostByTag(String tagName, PostType postType){
+        List<Post> posts = postRepository.findByTagsNameAndType(tagName, postType);
+
+        List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
+                .map(post -> {
+                    List<String> tagNames = post.getTags().stream()
+                            .map(PostTag::getName)
+                            .collect(Collectors.toList());
+
+                    return PostDTO.getAllPostResponse.PostSummary.builder()
+                            .id(post.getId())
+                            .title(post.getTitle())
+                            .postType(post.getType())
+                            .tagName(tagNames)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -201,15 +205,15 @@ public class PostService {
                 .map(clearHistory -> {
                     Post post = clearHistory.getPost();
 
-                    List<TagDTO.TagRequest> tags = post.getTags().stream()
-                            .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
+                    List<String> tagName = post.getTags().stream()
+                            .map(PostTag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
                             .id(post.getId())
                             .title(post.getTitle())
                             .postType(post.getType())
-                            .tags(tags)
+                            .tagName(tagName)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -223,15 +227,15 @@ public class PostService {
 
         List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
                 .map(post -> {
-                    List<TagDTO.TagRequest> tags = post.getTags().stream()
-                            .map(tag -> new TagDTO.TagRequest(tag.getName(), tag.getCategory()))
+                    List<String> tagName = post.getTags().stream()
+                            .map(PostTag::getName)
                             .collect(Collectors.toList());
 
                     return PostDTO.getAllPostResponse.PostSummary.builder()
                             .id(post.getId())
                             .title(post.getTitle())
                             .postType(post.getType())
-                            .tags(tags)
+                            .tagName(tagName)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -242,6 +246,77 @@ public class PostService {
                 .totalPage(posts.getTotalPages())
                 .totalElements(posts.getTotalElements())
                 .build();
+    }
+
+    @Transactional
+    public void updateSurveyPost(PostDTO.UpdateSurveyRequest request){
+        Post post = postRepository.findById(request.getId())
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        if(post.getType() != PostType.S){
+            throw new IllegalArgumentException("Survey 게시글만 수정할 수 있습니다.");
+        }
+
+        updateCommonField(post, request);
+
+        if(request.getSurvey() != null){
+            post.setSurvey(request.getSurvey());
+        }
+
+        postRepository.save(post);
+    }
+
+    @Transactional
+    public void updateTaskPost(PostDTO.UpdateTaskRequest request){
+        Post post = postRepository.findById(request.getId())
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        if(post.getType() != PostType.T){
+            throw new IllegalArgumentException("Task 게시글만 수정할 수 있습니다.");
+        }
+
+        updateCommonField(post, request);
+
+        if(request.getPayment() != null){
+            post.setPayment(request.getPayment());
+        }
+
+        if(request.getAddress() != null){
+            post.setAddress(request.getAddress());
+        }
+
+        postRepository.save(post);
+    }
+
+    public void updateCommonField(Post post, PostDTO.AbstractPostUpdateRequest request){
+        if (request.getTitle() != null) {
+            post.setTitle(request.getTitle());
+        }
+        if (request.getContent() != null) {
+            post.setContent(request.getContent());
+        }
+        if (request.getStartDate() != null) {
+            post.setStartDate(request.getStartDate());
+        }
+        if(request.getStartTime() != null){
+            post.setStartTime(request.getStartTime());
+        }
+        if (request.getEndDate() != null) {
+            post.setEndDate(request.getEndDate());
+        }
+        if(request.getEndTime() != null){
+            post.setEndTime(request.getEndTime());
+        }
+        if (request.getTags() != null) {
+            List<PostTag> newTags = request.getTags().stream()
+                    .map(tagRequest -> postTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
+                            .orElseGet(() -> postTagRepository.save(new PostTag(tagRequest.getName(), tagRequest.getCategory(), post))))
+                    .collect(Collectors.toList());
+
+            post.getTags().clear();
+            post.getTags().addAll(newTags);
+        }
+
     }
 
     public void deletePost(String userEmail, Long postId){

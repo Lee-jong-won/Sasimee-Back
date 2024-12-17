@@ -7,6 +7,7 @@ import com.example.Sasimee_Back.dto.UserDTO;
 import com.example.Sasimee_Back.entity.RefreshToken;
 import com.example.Sasimee_Back.repository.RefreshTokenRepository;
 import com.example.Sasimee_Back.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -81,32 +82,22 @@ public class UserAuthService {
             throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 
-        // 4-1. Refresh Token 검증 후 refresh token이 만료된 경우, access / refresh 재발급
-        // 4-2. Refresh token이 유효한 경우, access만 재발급
+        // 4. Refresh Token 검증 후 refresh token이 만료되지 않은 경우, access / refresh 재발급
         boolean isRefreshTokenValidated = tokenProvider.validateToken(tokenRequestDto.getRefreshToken());
-        if (!isRefreshTokenValidated) {
+        if (isRefreshTokenValidated) {
             String newRefreshToken = tokenProvider.generateRefreshToken();
             String newAccessToken = tokenProvider.createAccessToken(authentication);
             RefreshToken newRefreshTokenEntity = refreshToken.updateValue(newRefreshToken);
             refreshTokenRepository.save(newRefreshTokenEntity);
 
             return TokenDto.builder()
-                .grantType("bearer")
-                .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
-                .build();
-        }
-        else
-        {
-            String newAccessToken = tokenProvider.createAccessToken(authentication);
-
-            return TokenDto.builder()
                     .grantType("bearer")
                     .accessToken(newAccessToken)
-                    .refreshToken(null)
+                    .refreshToken(newRefreshToken)
                     .build();
         }
-
+        else
+            throw new ExpiredJwtException(null, null, "refresh jwt token is expired!");
 
     }
 

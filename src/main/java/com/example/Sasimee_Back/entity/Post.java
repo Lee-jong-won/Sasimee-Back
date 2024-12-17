@@ -1,15 +1,13 @@
 package com.example.Sasimee_Back.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Setter
 @Getter
 @Entity
 @Builder
@@ -24,7 +22,7 @@ public class Post {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "post_content")
     private String content;
 
     @Enumerated(EnumType.STRING)
@@ -53,7 +51,7 @@ public class Post {
     private String address;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = true)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToMany
