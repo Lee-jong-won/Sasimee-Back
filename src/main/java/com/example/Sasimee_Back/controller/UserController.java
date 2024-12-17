@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "로그인 및 회원가입", description="로그인 및 회원가입을 위한 api들")
+@Tag(name = "로그인/회원가입, Mypage", description="로그인/회원가입 및 mypage에 필요한 api들")
 public class UserController {
 
     private final UserService userService;
@@ -96,6 +96,13 @@ public class UserController {
         return ResponseEntity.ok(userAuthService.reissue(tokenRequestDto));
     }
 
+
+
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "조회 실패"),
+            @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 선택한 태그 조회 성공"
+            )
+    })
     @GetMapping("/mypage/tag")
     public ResponseEntity<List<TagDTO.TagResponse>> getAllTags(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
         String email = sasimeePrincipal.getUseremail();
@@ -103,6 +110,11 @@ public class UserController {
         return new ResponseEntity<>(tagResponses, HttpStatus.OK);
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "조회 실패"),
+            @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 입력한 프로필 정보 조회 성공"
+            )
+    })
     @GetMapping("/mypage/profile")
     public ResponseEntity<UserDTO.profileResponse> getUserProfile(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal)
     {
@@ -111,6 +123,11 @@ public class UserController {
         return new ResponseEntity<>(profileResponse, HttpStatus.OK);
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "조회 실패"),
+            @ApiResponse(responseCode = "200", description = "프로필 업데이트 성공"
+            )
+    })
     @PatchMapping("/mypage/profile/modifiy")
     public ResponseEntity<?> modifyUserProfile(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestBody UserDTO.profileRequest profileRequest)
     {
@@ -119,6 +136,11 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "조회 실패"),
+            @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 선택한 태그 업데이트 성공"
+            )
+    })
     @PatchMapping("/mypage/tag/modify")
     public ResponseEntity<?> modifyUserTag(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestBody List<TagDTO.TagRequest> tagRequests)
     {
@@ -126,7 +148,5 @@ public class UserController {
         userService.modifyUserTag(email, tagRequests);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 
 }
