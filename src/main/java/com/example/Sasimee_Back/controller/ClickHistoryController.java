@@ -2,6 +2,7 @@ package com.example.Sasimee_Back.controller;
 
 import com.example.Sasimee_Back.dto.PostDTO;
 import com.example.Sasimee_Back.dto.SasimeePrincipal;
+import com.example.Sasimee_Back.entity.Post;
 import com.example.Sasimee_Back.entity.PostType;
 import com.example.Sasimee_Back.service.ClickHistoryService;
 import com.example.Sasimee_Back.service.PostService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -42,12 +44,35 @@ public class ClickHistoryController {
             @ApiResponse(responseCode = "200", description = "클릭 기록 기반 게시글들 추천 성공"),
             @ApiResponse(responseCode = "400", description = "클릭 기록 기반 게시글들 추천 실패")
     })
-    public ResponseEntity<Object> recommendSurvey(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
+    public ResponseEntity<Object> recommendSurvey(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestParam(defaultValue = "3") int limit) {
         PostType postType = PostType.S;
             try{
                 List<String> topTags = clickHistoryService.recommender(sasimeePrincipal.getUsername());
-                PostDTO.getAllPostResponse posts = postService.getPostByTag(topTags.get(0), postType);
-                return ResponseEntity.ok(posts);
+
+                if(topTags.isEmpty()){
+                    return ResponseEntity.status(200).body("추천할 태그가 없습니다.");
+                }
+
+                List<PostDTO.getAllPostResponse.PostSummary> posts = new ArrayList<>();
+                for (String topTag : topTags) {
+                    PostDTO.getAllPostResponse tagPost = postService.getPostByTag(topTag, postType);
+                    posts.addAll(tagPost.getPosts());
+                }
+
+                List<PostDTO.getAllPostResponse.PostSummary> limitedPosts = posts.stream()
+                        .distinct()
+                        .limit(limit)
+                        .toList();
+
+                if(limitedPosts.isEmpty()){
+                    return ResponseEntity.status(200).body("추천할 게시글이 없습니다.");
+                }
+
+                PostDTO.getAllPostResponse response = PostDTO.getAllPostResponse.builder()
+                        .posts(limitedPosts)
+                        .build();
+
+                return ResponseEntity.ok(response);
             }catch (Exception e){
                 return ResponseEntity.status(400).body("추천 게시글을 가져오지 못했습니다." + e.getMessage());
             }
@@ -59,13 +84,35 @@ public class ClickHistoryController {
             @ApiResponse(responseCode = "200", description = "클릭 기록 기반 게시글들 추천 성공"),
             @ApiResponse(responseCode = "400", description = "클릭 기록 기반 게시글들 추천 실패")
     })
-    public ResponseEntity<Object> recommendTask(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
+    public ResponseEntity<Object> recommendTask(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestParam(defaultValue = "3") int limit) {
         PostType postType = PostType.T;
-
         try{
             List<String> topTags = clickHistoryService.recommender(sasimeePrincipal.getUsername());
-            PostDTO.getAllPostResponse posts = postService.getPostByTag(topTags.get(0), postType);
-            return ResponseEntity.ok(posts);
+
+            if(topTags.isEmpty()){
+                return ResponseEntity.status(200).body("추천할 태그가 없습니다.");
+            }
+
+            List<PostDTO.getAllPostResponse.PostSummary> posts = new ArrayList<>();
+            for (String topTag : topTags) {
+                PostDTO.getAllPostResponse tagPost = postService.getPostByTag(topTag, postType);
+                posts.addAll(tagPost.getPosts());
+            }
+
+            List<PostDTO.getAllPostResponse.PostSummary> limitedPosts = posts.stream()
+                    .distinct()
+                    .limit(limit)
+                    .toList();
+
+            if(limitedPosts.isEmpty()){
+                return ResponseEntity.status(200).body("추천할 게시글이 없습니다.");
+            }
+
+            PostDTO.getAllPostResponse response = PostDTO.getAllPostResponse.builder()
+                    .posts(limitedPosts)
+                    .build();
+
+            return ResponseEntity.ok(response);
         }catch (Exception e){
             return ResponseEntity.status(400).body("추천 게시글을 가져오지 못했습니다." + e.getMessage());
         }

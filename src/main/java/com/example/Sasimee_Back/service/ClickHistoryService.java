@@ -1,22 +1,22 @@
 package com.example.Sasimee_Back.service;
 
-import com.example.Sasimee_Back.entity.ClickHistory;
-import com.example.Sasimee_Back.entity.Post;
-import com.example.Sasimee_Back.entity.Tag;
-import com.example.Sasimee_Back.entity.User;
+import com.example.Sasimee_Back.entity.*;
 import com.example.Sasimee_Back.repository.ClickHistoryRepository;
 import com.example.Sasimee_Back.repository.PostRepository;
 import com.example.Sasimee_Back.repository.UserRepository;
+import com.example.Sasimee_Back.repository.UserTagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ClickHistoryService {
     private final ClickHistoryRepository clickHistoryRepository;
+    private final UserTagRepository userTagRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
@@ -43,7 +43,6 @@ public class ClickHistoryService {
         clickHistoryRepository.save(clickHistory);
     }
 
-    @Transactional
     public List<String> recommender(String userEmail){
         List<ClickHistory> clickHistoryList = clickHistoryRepository.findByUser(userRepository.findByEmail(userEmail).orElseThrow(RuntimeException::new));
 
@@ -60,10 +59,33 @@ public class ClickHistoryService {
             }
         }
 
+        List<String> recommendTags = tagFrequencies.entrySet().stream()
+                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
+                .map(Map.Entry::getKey)
+                .toList();
+
+        if(recommendTags.size() < 10){
+            List<String> userTags = getUserTags(userEmail);
+            if(!userTags.isEmpty()){
+                for(String tag : userTags){
+                    tagFrequencies.put(tag, tagFrequencies.getOrDefault(tag, 0) + 1);
+                }
+            }
+        }
+
         return tagFrequencies.entrySet().stream()
                 .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
                 .limit(3)
                 .map(Map.Entry::getKey)
-                .toList();
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getUserTags(String userEmail){
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        List<UserTag> userTags = userTagRepository.findByUser(user);
+
+        return userTags.stream()
+                .map(UserTag::getName)
+                .collect(Collectors.toList());
     }
 }
