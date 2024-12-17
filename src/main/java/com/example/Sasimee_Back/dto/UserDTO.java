@@ -80,13 +80,38 @@ public class UserDTO {
 
     @Builder
     @Data
-    @Schema
+    @Schema(description = "회원가입 성공 시 프론트에게 넘겨주는 정보")
     public static class registerResponse {
         @Schema(example = "회원가입 성공 여부")
         private boolean status;
 
         @Schema(example = "회원가입 성공 여부에 따른 메시지")
         private String message;
+    }
+
+    @Builder
+    @Data
+    @Schema(description = "프로필 정보 변경을 위한 정보")
+    public static class profileRequest {
+        @Schema(example = "이름")
+        private String name;
+
+        @Schema(example = "전화번호")
+        private String phonenumber;
+    }
+
+    @Builder
+    @Data
+    @Schema(description = "프로필 조회 시 프론트에게 넘겨주는 정보")
+    public static class profileResponse {
+        @Schema(example ="이메일")
+        private String email;
+
+        @Schema(example = "이름")
+        private String name;
+
+        @Schema(example = "전화번호")
+        private String phonenumber;
     }
 
 }
