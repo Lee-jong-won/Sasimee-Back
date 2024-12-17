@@ -6,6 +6,8 @@ import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.service.EmailAuthService;
 import com.example.Sasimee_Back.service.UserAuthService;
 import com.example.Sasimee_Back.service.UserService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -142,7 +144,14 @@ public class UserController {
             )
     })
     @PatchMapping("/mypage/tag/modify")
-    public ResponseEntity<?> modifyUserTag(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestBody List<TagDTO.TagRequest> tagRequests)
+    public ResponseEntity<?> modifyUserTag(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestBody
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "List of items",
+            required = true,
+            content = @io.swagger.v3.oas.annotations.media.Content(
+                    array = @ArraySchema(schema = @Schema(implementation = TagDTO.TagRequest.class))
+            )
+    ) List<TagDTO.TagRequest> tagRequests)
     {
         String email = sasimeePrincipal.getUseremail();
         userService.modifyUserTag(email, tagRequests);
