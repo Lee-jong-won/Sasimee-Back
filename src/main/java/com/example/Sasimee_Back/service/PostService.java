@@ -248,6 +248,34 @@ public class PostService {
                 .build();
     }
 
+    public PostDTO.getSurveyResponse getSurveyPosts(int page, int size, PostType postType){
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
+        Page<Post> posts = postRepository.findByType(postType, pageRequest);
+
+        List<PostDTO.getSurveyResponse.PostSummary> postSummaries = posts.stream()
+                .map(post -> {
+                    List<String> tagName = post.getTags().stream()
+                            .map(PostTag::getName)
+                            .collect(Collectors.toList());
+
+                    return PostDTO.getSurveyResponse.PostSummary.builder()
+                            .id(post.getId())
+                            .title(post.getTitle())
+                            .postType(post.getType())
+                            .tagName(tagName)
+                            .survey(post.getSurvey())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return PostDTO.getSurveyResponse.builder()
+                .posts(postSummaries)
+                .currentPage(posts.getNumber())
+                .totalPage(posts.getTotalPages())
+                .totalElements(posts.getTotalElements())
+                .build();
+    }
+
     @Transactional
     public void updateSurveyPost(PostDTO.UpdateSurveyRequest request){
         Post post = postRepository.findById(request.getId())
