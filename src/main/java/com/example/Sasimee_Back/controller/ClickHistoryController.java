@@ -2,7 +2,6 @@ package com.example.Sasimee_Back.controller;
 
 import com.example.Sasimee_Back.dto.PostDTO;
 import com.example.Sasimee_Back.dto.SasimeePrincipal;
-import com.example.Sasimee_Back.entity.Post;
 import com.example.Sasimee_Back.entity.PostType;
 import com.example.Sasimee_Back.service.ClickHistoryService;
 import com.example.Sasimee_Back.service.PostService;

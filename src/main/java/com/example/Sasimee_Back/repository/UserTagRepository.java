@@ -1,6 +1,5 @@
 package com.example.Sasimee_Back.repository;
 
-import com.example.Sasimee_Back.entity.PostTag;
 import com.example.Sasimee_Back.entity.TagCategory;
 import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.entity.UserTag;
