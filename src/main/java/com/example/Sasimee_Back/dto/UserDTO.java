@@ -89,4 +89,29 @@ public class UserDTO {
         private String message;
     }
 
+    @Builder
+    @Data
+    @Schema
+    public static class profileRequest {
+        @Schema(example = "이름")
+        private String name;
+
+        @Schema(example = "전화번호")
+        private String phonenumber;
+    }
+
+    @Builder
+    @Data
+    @Schema
+    public static class profileResponse {
+        @Schema(example ="이메일")
+        private String email;
+
+        @Schema(example = "이름")
+        private String name;
+
+        @Schema(example = "전화번호")
+        private String phonenumber;
+    }
+
 }

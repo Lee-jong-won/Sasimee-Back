@@ -1,5 +1,6 @@
 package com.example.Sasimee_Back.service;
 
+import com.example.Sasimee_Back.dto.TagDTO;
 import com.example.Sasimee_Back.dto.UserDTO;
 import com.example.Sasimee_Back.entity.PostTag;
 import com.example.Sasimee_Back.entity.User;
@@ -56,5 +57,60 @@ public class UserService {
                 .build();
     }
 
+
+    public List<TagDTO.TagResponse> getAllUserTags(String email)
+    {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다"));
+
+        List<TagDTO.TagResponse> tagResponses = user.getTags()
+                .stream()
+                .map(tag -> new TagDTO.TagResponse(tag.getName(),tag.getCategory()))
+                .collect(Collectors.toList());
+
+        return tagResponses;
+    }
+
+    public UserDTO.profileResponse getUserProfile(String email)
+    {
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+        return UserDTO.profileResponse.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .phonenumber(user.getPhoneNumber())
+                .build();
+    }
+
+    public void modifyUserProfile(String email, UserDTO.profileRequest profileRequest)
+    {
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+        user.setName(profileRequest.getName());
+        user.setPhoneNumber(profileRequest.getPhonenumber());
+
+        userRepository.save(user);
+    }
+
+    public void modifyUserTag(String email, List<TagDTO.TagRequest> tagRequests) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+
+        //user의 id와 tagRequests의 category를 기준으로 tag를 탐색
+        List<UserTag> userTags = user.getTags();
+
+        // TagRequest 리스트 순회하여 처리
+        for (TagDTO.TagRequest tagRequest : tagRequests) {
+            // user에 매핑된 UserTag 중 category가 일치하는 것 찾기
+            UserTag targetTag = userTags.stream()
+                    .filter(userTag -> userTag.getCategory() == tagRequest.getCategory())
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("No UserTag found with the specified category"));
+
+            // UserTag의 name을 tagRequest의 name으로 대체
+            targetTag.setName(tagRequest.getName());
+
+            // 변경사항 저장 (Cascade 옵션이 걸려 있으면 별도 저장 필요 X)
+            userTagRepository.save(targetTag);
+        }
+    }
 
 }

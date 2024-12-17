@@ -20,6 +20,15 @@ public class TagDTO {
         private TagCategory category;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Schema(description = "태그 응답을 위한 정보")
+    public static class TagResponse{
+        private String name;
+        private TagCategory category;
+    }
 
 
 
