@@ -25,6 +25,9 @@ public abstract class Tag {
     @ManyToMany(mappedBy = "tags")
     private List<Post> posts;
 
+    @ManyToMany(mappedBy = "tags")
+    private List<User> users;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TagCategory category;
