@@ -169,6 +169,7 @@ public class PostService {
                             .title(post.getTitle())
                             .postType(post.getType())
                             .tagName(tagName)
+                            .author(post.getAuthor())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -190,6 +191,7 @@ public class PostService {
                             .title(post.getTitle())
                             .postType(post.getType())
                             .tagName(tagNames)
+                            .author(post.getAuthor())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -213,6 +215,7 @@ public class PostService {
                             .id(post.getId())
                             .title(post.getTitle())
                             .postType(post.getType())
+                            .author(post.getAuthor())
                             .tagName(tagName)
                             .build();
                 })
@@ -236,6 +239,7 @@ public class PostService {
                             .title(post.getTitle())
                             .postType(post.getType())
                             .tagName(tagName)
+                            .author(post.getAuthor())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -264,6 +268,7 @@ public class PostService {
                             .postType(post.getType())
                             .tagName(tagName)
                             .survey(post.getSurvey())
+                            .author(post.getAuthor())
                             .build();
                 })
                 .collect(Collectors.toList());

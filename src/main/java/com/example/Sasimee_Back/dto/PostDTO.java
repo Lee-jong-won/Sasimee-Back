@@ -202,6 +202,7 @@ public class PostDTO {
             private String title;
             private PostType postType;
             private List<String> tagName;
+            private String author;
         }
     }
 
@@ -225,6 +226,7 @@ public class PostDTO {
             private String title;
             private PostType postType;
             private List<String> tagName;
+            private String author;
             private String survey;
         }
     }
