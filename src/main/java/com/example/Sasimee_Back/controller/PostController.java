@@ -146,10 +146,10 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "페이징을 통한 게시글들 조회 성공"),
             @ApiResponse(responseCode = "400", description = "페이징을 통한 게시글들 조회 실패")
     })
-    public  ResponseEntity<PostDTO.getAllPostResponse> getAllTask(@RequestParam(defaultValue = "0") int page,
+    public  ResponseEntity<PostDTO.getTaskResponse> getAllTask(@RequestParam(defaultValue = "0") int page,
                                                                    @RequestParam(defaultValue = "10") int size) {
         PostType postType = PostType.T;
-        PostDTO.getAllPostResponse response = postService.getAllPosts(page, size, postType);
+        PostDTO.getTaskResponse response = postService.getTaskPosts(page, size, postType);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

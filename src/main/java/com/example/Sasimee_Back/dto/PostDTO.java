@@ -207,7 +207,7 @@ public class PostDTO {
 
     @Data
     @Builder
-    @Schema(description = "다수의 게시글들 조회 응답")
+    @Schema(description = "다수의 설문형 게시글들 조회 응답")
     public static class getSurveyResponse {
         private List<PostSummary> posts;
         @Schema(description = "게시글들이 포함된 페이지의 index")
@@ -226,6 +226,32 @@ public class PostDTO {
             private PostType postType;
             private List<String> tagName;
             private String survey;
+        }
+    }
+
+    @Data
+    @Builder
+    @Schema(description = "다수의 수행형 게시글들 조회 응답")
+    public static class getTaskResponse {
+        private List<PostSummary> posts;
+        @Schema(description = "게시글들이 포함된 페이지의 index")
+        private int currentPage;
+
+        @Schema(description = "모든 페이지의 수")
+        private int totalPage;
+        private long totalElements;
+
+        @Data
+        @Builder
+        @Schema(description = "요약된 게시글 정보")
+        public static class PostSummary{
+            private long id;
+            private String title;
+            private PostType postType;
+            private List<String> tagName;
+            private String author;
+            private String address;
+            private Long payment;
         }
     }
 
