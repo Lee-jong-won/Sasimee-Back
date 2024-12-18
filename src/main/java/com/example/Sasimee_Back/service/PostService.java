@@ -370,6 +370,10 @@ public class PostService {
         if(request.getEndTime() != null){
             post.setEndTime(request.getEndTime());
         }
+        if(request.getAuthor() != null){
+            post.setAuthor(request.getAuthor());
+        }
+
         if (request.getTags() != null) {
             List<PostTag> newTags = request.getTags().stream()
                     .map(tagRequest -> postTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
