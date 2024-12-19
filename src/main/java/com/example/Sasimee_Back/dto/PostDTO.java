@@ -259,7 +259,7 @@ public class PostDTO {
 
     @Data
     @Schema(description = "게시글 수정 요청 공통 정보")
-    public abstract static class AbstractPostUpdateRequest {
+    public abstract static class PostUpdateRequest {
         @NotNull(message = "수정할 게시글의 ID는 필수 항목입니다.")
         @Schema(description = "게시글 ID", example = "1")
         private Long id;
@@ -301,14 +301,14 @@ public class PostDTO {
 
     @Data
     @Schema(description = "설문형 게시글 수정 요청")
-    public static class UpdateSurveyRequest extends AbstractPostUpdateRequest {
+    public static class UpdateSurveyRequest extends PostUpdateRequest {
         @Schema(description = "구글 폼 링크", example = "구글 폼 링크")
         private String survey;
     }
 
     @Data
     @Schema(description = "수행형 게시글 수정 요청")
-    public static class UpdateTaskRequest extends AbstractPostUpdateRequest {
+    public static class UpdateTaskRequest extends PostUpdateRequest {
         @Schema(description = "지급되는 급여 정보", example = "급여 정보")
         private Long payment;
 

@@ -351,7 +351,7 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public void updateCommonField(Post post, PostDTO.AbstractPostUpdateRequest request){
+    public void updateCommonField(Post post, PostDTO.PostUpdateRequest request){
         if (request.getTitle() != null) {
             post.setTitle(request.getTitle());
         }
