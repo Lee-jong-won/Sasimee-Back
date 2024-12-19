@@ -77,7 +77,7 @@ public class PostController {
     }
 
 
-    //Search Post (by ID)
+    //Search Survey Post (by ID)
     @Operation(summary = "특정 설문형 게시글 조회", description = "게시글 ID를 통한 설문형 게시글 조회")
     @GetMapping("/get/survey/{postId}")
     @ApiResponses({
@@ -89,7 +89,7 @@ public class PostController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //Search Post (by ID)
+    //Search Task Post (by ID)
     @Operation(summary = "특정 수행형 게시글 조회", description = "게시글 ID를 통한 수행형 게시글 조회")
     @GetMapping("/get/task/{postId}")
     @ApiResponses({
@@ -98,18 +98,6 @@ public class PostController {
     })
     public ResponseEntity<PostDTO.getTaskPostResponse> getTaskPostById(@PathVariable Long postId) {
         PostDTO.getTaskPostResponse response = postService.getTaskPostById(postId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    //Search Posts (by tag name)
-    @Operation(summary = "태그를 사용한 게시글 조회", description = "특정 태그를 포함하고 있는 설문형/수행형 게시글 요약 정보 전체 조회")
-    @GetMapping("/tag/{postType}/{tagName}")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "태그를 포함한 게시글들 요약 정보 조회 성공"),
-            @ApiResponse(responseCode = "400", description = "태그를 포함한 게시글들 요약 정보 조회 실패")
-    })
-    public ResponseEntity<PostDTO.getAllPostResponse> getPostByTag( @PathVariable PostType postType, @PathVariable String tagName) {
-        PostDTO.getAllPostResponse response = postService.getPostByTag(tagName, postType);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
