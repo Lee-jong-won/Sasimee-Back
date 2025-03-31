@@ -169,7 +169,6 @@ public class PostService {
                             .title(post.getTitle())
                             .postType(post.getType())
                             .tagName(tagName)
-                            .author(post.getAuthor())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -191,7 +190,6 @@ public class PostService {
                             .title(post.getTitle())
                             .postType(post.getType())
                             .tagName(tagNames)
-                            .author(post.getAuthor())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -215,7 +213,6 @@ public class PostService {
                             .id(post.getId())
                             .title(post.getTitle())
                             .postType(post.getType())
-                            .author(post.getAuthor())
                             .tagName(tagName)
                             .build();
                 })
@@ -239,7 +236,6 @@ public class PostService {
                             .title(post.getTitle())
                             .postType(post.getType())
                             .tagName(tagName)
-                            .author(post.getAuthor())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -268,7 +264,6 @@ public class PostService {
                             .postType(post.getType())
                             .tagName(tagName)
                             .survey(post.getSurvey())
-                            .author(post.getAuthor())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -370,10 +365,6 @@ public class PostService {
         if(request.getEndTime() != null){
             post.setEndTime(request.getEndTime());
         }
-        if(request.getAuthor() != null){
-            post.setAuthor(request.getAuthor());
-        }
-
         if (request.getTags() != null) {
             List<PostTag> newTags = request.getTags().stream()
                     .map(tagRequest -> postTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())

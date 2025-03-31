@@ -202,7 +202,6 @@ public class PostDTO {
             private String title;
             private PostType postType;
             private List<String> tagName;
-            private String author;
         }
     }
 
@@ -226,7 +225,6 @@ public class PostDTO {
             private String title;
             private PostType postType;
             private List<String> tagName;
-            private String author;
             private String survey;
         }
     }
@@ -281,9 +279,6 @@ public class PostDTO {
 
         @Schema(description = "게시글 마감 시간", example = "12:30")
         private String endTime;
-
-        @Schema(description = "게시글 작성자", example = "김가천")
-        private String author;
 
         @Schema(description = "게시글에 포함된 태그 요청 정보", example = "[{\"name\": \"여성\", \"category\": \"GENDER\"}]")
         private List<TagDTO.TagRequest> tags;
