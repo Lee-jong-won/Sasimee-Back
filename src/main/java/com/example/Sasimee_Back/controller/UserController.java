@@ -117,41 +117,40 @@ public class UserController {
         return new ResponseEntity<>(tagResponses, HttpStatus.OK);
     }
 
-   /* @ApiResponses({
+   @ApiResponses({
             @ApiResponse(responseCode = "400", description = "조회 실패"),
             @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 입력한 프로필 정보 조회 성공"
             )
     })
     @User
     @GetMapping("/mypage/profile")
-    public ResponseEntity<UserDTO.profileResponse> getUserProfile(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal)
+    public ResponseEntity<UserDTO.profileResponse> getUserProfile(@JwtAuthentication String email)
     {
-        String email = sasimeePrincipal.getUseremail();
         UserDTO.profileResponse profileResponse = userService.getUserProfile(email);
         return new ResponseEntity<>(profileResponse, HttpStatus.OK);
     }
-*/
-  /*  @ApiResponses({
+
+  @ApiResponses({
             @ApiResponse(responseCode = "400", description = "조회 실패"),
             @ApiResponse(responseCode = "200", description = "프로필 업데이트 성공"
             )
     })
     @User
     @PatchMapping("/mypage/profile/modifiy")
-    public ResponseEntity<?> modifyUserProfile(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestBody UserDTO.profileRequest profileRequest)
+    public ResponseEntity<?> modifyUserProfile(@JwtAuthentication String email, @RequestBody UserDTO.profileRequest profileRequest)
     {
-        String email = sasimeePrincipal.getUseremail();
         userService.modifyUserProfile(email, profileRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-*/
-  /*  @ApiResponses({
+
+  @ApiResponses({
             @ApiResponse(responseCode = "400", description = "조회 실패"),
             @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 선택한 태그 업데이트 성공"
             )
     })
+    @User
     @PatchMapping("/mypage/tag/modify")
-    public ResponseEntity<?> modifyUserTag(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestBody
+    public ResponseEntity<?> modifyUserTag(@JwtAuthentication String email, @RequestBody
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "List of items",
             required = true,
@@ -160,9 +159,8 @@ public class UserController {
             )
     ) List<TagDTO.TagRequest> tagRequests)
     {
-        String email = sasimeePrincipal.getUseremail();
         userService.modifyUserTag(email, tagRequests);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-*/
+
 }
