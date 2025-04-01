@@ -1,27 +1,26 @@
 package com.example.Sasimee_Back.controller;
 
 
+import com.example.Sasimee_Back.argumentResolver.JwtAuthentication;
+import com.example.Sasimee_Back.ResponseCode.UserResultCode;
+import com.example.Sasimee_Back.authentication.User;
+import com.example.Sasimee_Back.common.BaseResponse;
+import com.example.Sasimee_Back.service.TokenProvider;
 import com.example.Sasimee_Back.dto.*;
-import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.service.EmailAuthService;
-import com.example.Sasimee_Back.service.UserAuthService;
 import com.example.Sasimee_Back.service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RequestMapping("/user")
@@ -32,8 +31,28 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserAuthService userAuthService;
     private final EmailAuthService emailAuthService;
+    private final TokenProvider tokenProvider;
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ResponseEntity<BaseResponse<Void>> jwtExceptionHandler(JwtException e){
+        log.error("message={}", e);
+        return BaseResponse.toResponseEntity(UserResultCode.WRONG_JWT_TOKEN);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ResponseEntity<BaseResponse<Void>> jwtExceptionHandler(ExpiredJwtException e){
+        log.error("message={}", e);
+        return BaseResponse.toResponseEntity(UserResultCode.WRONG_JWT_TOKEN);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler
+    public ResponseEntity<BaseResponse<Void>> runtimeExceptionHandler(RuntimeException e){
+        log.error("message={}", e);
+        return BaseResponse.toResponseEntity(UserResultCode.INTERNAL_SERVER_ERROR);
+    }
 
     @ApiResponses({
             @ApiResponse(responseCode = "400", description = "이메일 인증이 되지 않아서, 회원가입 불가"),
@@ -41,36 +60,28 @@ public class UserController {
             )
     })
     @PostMapping("/register")
-    public ResponseEntity<UserDTO.registerResponse> registerController(
+    public ResponseEntity<BaseResponse<Void>> register(
             @RequestBody UserDTO.registerRequest registerRequest) {
         boolean isVerified = emailAuthService.verifyEmailAuthentication(registerRequest.getEmail());
+        if (isVerified == false)
+            return BaseResponse.toResponseEntity(UserResultCode.NOT_VERIFIED);
 
-        if (isVerified == false) return ResponseEntity.badRequest().
-                body(UserDTO.registerResponse.builder()
-                        .status(false)
-                        .message("이메일 인증이 되지 않았습니다. 이메일 인증을 완료한 후 회원가입이 가능합니다.")
-                        .build());
-
-        UserDTO.registerResponse registerResponse = userService.register(registerRequest);
+        userService.register(registerRequest);
         emailAuthService.deleteVerificatedEmailInfo(registerRequest.getEmail());
-
-
-        return ResponseEntity.ok(registerResponse);
+        return BaseResponse.toResponseEntity(UserResultCode.SUCCESS_REGISTER);
     }
 
     @ApiResponses({
-            @ApiResponse(responseCode = "401", description = "아이디 또는 비밀번호가 달라서, 로그인 불가"),
+            @ApiResponse(responseCode = "400", description = "아이디 또는 비밀번호가 달라서, 로그인 불가"),
             @ApiResponse(responseCode = "200", description = "로그인 성공"
             )
     })
+    @User
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> loginController(@RequestBody UserDTO.loginRequest loginRequest) {
+    public ResponseEntity<BaseResponse<TokenDto>> login(@RequestBody UserDTO.loginRequest loginRequest) {
         //중복 로그인 방지
-
-        //아이디 또는 비밀번호가 틀린 경우 로그인 불가능
-        TokenDto tokenDto = userAuthService.login(loginRequest);
-        if (tokenDto == null) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(tokenDto);
+        TokenDto tokenDto = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+        return BaseResponse.toResponseEntity(UserResultCode.SUCCESS_LOGIN, tokenDto);
     }
 
     @ApiResponses({
@@ -78,54 +89,40 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "로그아웃 성공"
             )
     })
+    @User
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutController(HttpServletRequest request) {
-        // 1. request header에서 accessToken을 가져옴
-        String accessToken = request.getHeader("Authorization");
-
-        // "Bearer " 부분을 제거하고 실제 토큰만 추출
-        accessToken = accessToken.substring(7);
-
-        // 3. emailAuthService.logout 메소드에 토큰 전달하여 로그아웃 처리
-        try {
-            userAuthService.logout(accessToken);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Logout failed: " + e.getMessage());
-        }
-        return ResponseEntity.ok().build();
+    public ResponseEntity<BaseResponse<Void>> logout(@JwtAuthentication String memberEmail) {
+        userService.logout(memberEmail);
+        return BaseResponse.toResponseEntity(UserResultCode.SUCCESS_LOGOUT);
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        try {
-            TokenDto tokenDto = userAuthService.reissue(tokenRequestDto);
-            return ResponseEntity.ok(tokenDto);
-        } catch (ExpiredJwtException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-        }
+    @User
+    public ResponseEntity<BaseResponse<TokenDto>> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+        if (tokenProvider.validateToken(tokenRequestDto.getAccessToken()))
+            throw new JwtException("아직 만료되지 않은 토큰입니다");
+        TokenDto tokenDto = tokenProvider.reissue(tokenRequestDto);
+        return BaseResponse.toResponseEntity(UserResultCode.SUCCESS_REISSUE_TOKEN, tokenDto);
     }
-
-
 
     @ApiResponses({
             @ApiResponse(responseCode = "400", description = "조회 실패"),
             @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 선택한 태그 조회 성공"
             )
     })
+    @User
     @GetMapping("/mypage/tag")
-    public ResponseEntity<List<TagDTO.TagResponse>> getAllTags(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal) {
-        String email = sasimeePrincipal.getUseremail();
-        List<TagDTO.TagResponse> tagResponses = userService.getAllUserTags(email);
+    public ResponseEntity<List<TagDTO.TagResponse>> getAllTags(@JwtAuthentication String memberEmail) {
+        List<TagDTO.TagResponse> tagResponses = userService.getAllUserTags(memberEmail);
         return new ResponseEntity<>(tagResponses, HttpStatus.OK);
     }
 
-    @ApiResponses({
+   /* @ApiResponses({
             @ApiResponse(responseCode = "400", description = "조회 실패"),
             @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 입력한 프로필 정보 조회 성공"
             )
     })
+    @User
     @GetMapping("/mypage/profile")
     public ResponseEntity<UserDTO.profileResponse> getUserProfile(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal)
     {
@@ -133,12 +130,13 @@ public class UserController {
         UserDTO.profileResponse profileResponse = userService.getUserProfile(email);
         return new ResponseEntity<>(profileResponse, HttpStatus.OK);
     }
-
-    @ApiResponses({
+*/
+  /*  @ApiResponses({
             @ApiResponse(responseCode = "400", description = "조회 실패"),
             @ApiResponse(responseCode = "200", description = "프로필 업데이트 성공"
             )
     })
+    @User
     @PatchMapping("/mypage/profile/modifiy")
     public ResponseEntity<?> modifyUserProfile(@AuthenticationPrincipal SasimeePrincipal sasimeePrincipal, @RequestBody UserDTO.profileRequest profileRequest)
     {
@@ -146,8 +144,8 @@ public class UserController {
         userService.modifyUserProfile(email, profileRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @ApiResponses({
+*/
+  /*  @ApiResponses({
             @ApiResponse(responseCode = "400", description = "조회 실패"),
             @ApiResponse(responseCode = "200", description = "회원이 회원가입 시 선택한 태그 업데이트 성공"
             )
@@ -166,5 +164,5 @@ public class UserController {
         userService.modifyUserTag(email, tagRequests);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+*/
 }

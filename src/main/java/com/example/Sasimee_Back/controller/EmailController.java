@@ -1,23 +1,24 @@
 package com.example.Sasimee_Back.controller;
 
+import com.example.Sasimee_Back.ResponseCode.EmailResultCode;
+import com.example.Sasimee_Back.common.BaseResponse;
+import com.example.Sasimee_Back.ResponseCode.BasicResultCode;
 import com.example.Sasimee_Back.dto.EmailDTO;
 import com.example.Sasimee_Back.service.EmailAuthService;
-import com.example.Sasimee_Back.service.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessageRemovedException;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/email")
 @RestController
@@ -26,8 +27,21 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class EmailController {
 
-    private final EmailService emailService;
     private final EmailAuthService emailAuthService;
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<BaseResponse<Void>> messagingExHandler(MessagingException e){
+        log.error("message={}", e);
+        return BaseResponse.toResponseEntity(EmailResultCode.EMAIL_SENDING_FAILURE);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<BaseResponse<Void>> runtimeExHandler(RuntimeException e){
+        log.error("message={}", e);
+        return BaseResponse.toResponseEntity(EmailResultCode.UNKNOWN_SERVER_ERROR);
+    }
 
     @Operation(summary = "인증 메일 보내기", description = "회원 가입을 희망하는 사람의 이메일로 메일 보내기")
     @ApiResponses({
@@ -36,45 +50,35 @@ public class EmailController {
             )
     })
     @PostMapping("/send")
-    public ResponseEntity<EmailDTO.SentResponse> sendMail(@RequestBody EmailDTO.SentRequest emailRequest) {
+    public ResponseEntity<BaseResponse<Void>> sendMail(@Validated @RequestBody EmailDTO.SentRequest emailRequest) throws MessagingException {
 
-        log.info("email sent");
+        if(emailAuthService.checkCertifiedNumIsMade(emailRequest.getTo()))
+            return BaseResponse.toResponseEntity(EmailResultCode.IS_ALREADY_MADE);
+
         String authNum = EmailAuthService.createdCertifyNum();
-        emailAuthService.saveVerificationCode(emailRequest.getTo(), authNum, 30);
-        EmailDTO.SentResponse response = emailService.sendEmailNotice(emailRequest, authNum, "email");
+        emailAuthService.sendEmailNotice(emailRequest, authNum, "email");
+        log.info("email is sent successfully!");
 
-        if(response.isStatus() == false) {
-            emailAuthService.deleteVerificationCode(emailRequest.getTo());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-        else {
-            return ResponseEntity.ok(response);
-        }
+        emailAuthService.saveVerificationCode(emailRequest.getTo(), authNum, 30);
+        return BaseResponse.toResponseEntity(EmailResultCode.EMAIL_SEND_SUCCESS);
     }
+
 
     @Operation(summary = "이메일 검증하기", description = "회원 가입을 희망하는 사람이 받은 메일에서 인증 번호를 입력하여 서버에 전달한다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "403", description = "인증 번호가 틀린 경우"),
+            @ApiResponse(responseCode = "400", description = "인증 번호가 틀린 경우"),
             @ApiResponse(responseCode = "200", description = "이메일 인증 성공"
             )
     })
     @PostMapping("/verify")
-    public ResponseEntity<EmailDTO.VerifyMailResponse> verifyMail(@RequestBody EmailDTO.VerifyMailRequest request,
-    HttpSession session) {
+    public ResponseEntity<BaseResponse<Void>> verifyMail(@RequestBody EmailDTO.VerifyMailRequest request) {
 
         boolean verified = emailAuthService.verifyEmail(request.getEmail(), request.getAuthNum());
 
         if (!verified)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(EmailDTO.VerifyMailResponse.builder().status(false)
-                            .message("인증 번호가 틀립니다!")
-                            .build());
+            return BaseResponse.toResponseEntity(EmailResultCode.VERIFY_FAILURE);
         else {
-            return ResponseEntity.ok(EmailDTO.VerifyMailResponse.builder().status(true)
-                    .message("이메일 인증이 성공적으로 완료되었습니다.")
-                    .build());
+            return BaseResponse.toResponseEntity(EmailResultCode.VERIFY_SUCCESS);
         }
-
-
     }
 }

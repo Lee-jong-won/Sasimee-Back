@@ -1,16 +1,20 @@
 package com.example.Sasimee_Back.service;
 
 import com.example.Sasimee_Back.dto.TagDTO;
+import com.example.Sasimee_Back.dto.TokenDto;
 import com.example.Sasimee_Back.dto.UserDTO;
-import com.example.Sasimee_Back.entity.PostTag;
+import com.example.Sasimee_Back.entity.RefreshToken;
 import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.entity.UserTag;
+import com.example.Sasimee_Back.exception.PasswordNotMatchException;
 import com.example.Sasimee_Back.exception.UserAlreadyExistsException;
+import com.example.Sasimee_Back.repository.RefreshTokenRepository;
 import com.example.Sasimee_Back.repository.UserRepository;
 import com.example.Sasimee_Back.repository.UserTagRepository;
 import lombok.RequiredArgsConstructor;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,19 +31,19 @@ public class UserService {
 
     //토큰 만료시간은 1시간으로 설정
     private Long expiredMs = 1000 * 60 * 60l;
-
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final UserTagRepository userTagRepository;
 
     @Transactional
-    public UserDTO.registerResponse register(UserDTO.registerRequest registerRequest) {
+    public void register(UserDTO.registerRequest registerRequest) {
         Optional<User> userOptional = userRepository.findByEmail(registerRequest.getEmail());
 
         if (userOptional.isPresent())
             throw new UserAlreadyExistsException("이미 해당 이메일로 가입된 계정이 존재합니다!");
 
-        registerRequest.setPassword1(passwordEncoder.encode(registerRequest.getPassword1()));
+        registerRequest.setPassword1(BCrypt.hashpw(registerRequest.getPassword1(), BCrypt.gensalt()));
         User user = UserDTO.registerRequest.toEntity(registerRequest);
         user.addUserAuthority();
 
@@ -47,16 +51,43 @@ public class UserService {
                 .map(tagRequest -> userTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
                         .orElseGet(() -> userTagRepository.save(new UserTag(tagRequest.getName(), tagRequest.getCategory(), user))))
                 .collect(Collectors.toList());
-
         user.setTags(tags);
-        userRepository.save(user);
 
-        return UserDTO.registerResponse.builder()
-                .status(true)
-                .message("회원가입이 성공적으로 완료되었습니다!")
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public TokenDto login(String email, String password) {
+
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RuntimeException("해당 유저를 찾을 수 없습니다."));
+
+        if(!BCrypt.checkpw(password, user.getEncryptPassword()))
+            throw new PasswordNotMatchException("비밀번호가 틀립니다!");
+
+        // 3. 인증 정보를 기반으로 JWT 토큰 생성
+        String accessToken = tokenProvider.createAccessToken(email, false, TokenProvider.ACCESS_TOKEN_EXPIRE_TIME);
+        String refreshToken = tokenProvider.createRefreshToken(email, TokenProvider.REFRESH_TOKEN_EXPIRE_TIME);
+
+        // 4. RefreshToken 저장
+        RefreshToken refreshTokenEntity = RefreshToken.builder()
+                .key(email)
+                .value(refreshToken)
+                .build();
+
+        refreshTokenRepository.save(refreshTokenEntity);
+
+        // 5. 토큰 발급
+        return TokenDto.builder().grantType("bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
+    @Transactional
+    public void logout(String useremail){
+        refreshTokenRepository.deleteByKey(useremail);
+    }
 
     public List<TagDTO.TagResponse> getAllUserTags(String email)
     {
@@ -112,5 +143,6 @@ public class UserService {
             userTagRepository.save(targetTag);
         }
     }
+
 
 }
