@@ -4,7 +4,6 @@ import com.example.Sasimee_Back.argumentResolver.JwtAuthentication;
 import com.example.Sasimee_Back.authentication.User;
 import com.example.Sasimee_Back.service.ClickHistoryService;
 import com.example.Sasimee_Back.service.PostService;
-import com.example.Sasimee_Back.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "클릭 기록 관리", description = "클릭 기록 관리를 위한 API들 입니다.")
 public class ClickHistoryController {
     private final ClickHistoryService clickHistoryService;
-    private final PostService postService;
 
     @Operation(summary = "유저 클릭 기록 저장", description = "현재 접속한 유저의 해당 게시글 ID 클릭 기록을 저장합니다.")
     @ApiResponses({

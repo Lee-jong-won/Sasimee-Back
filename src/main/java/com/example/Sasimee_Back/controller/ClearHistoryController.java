@@ -28,7 +28,7 @@ public class ClearHistoryController {
     })
 
     @User
-    @PostMapping
+    @PostMapping("/{id}")
     public ResponseEntity<Void> saveClearHistory(@JwtAuthentication String email, @PathVariable Long id){
         clearHistoryService.saveClearHistory(email, id);
         return ResponseEntity.ok().build();
