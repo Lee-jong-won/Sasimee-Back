@@ -22,6 +22,9 @@ public class JwtAuthenticateInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        log.info("path={}", request.getServletPath());
+
         String jwt = tokenProvider.resolveToken(request);
 
         if(jwt == null){

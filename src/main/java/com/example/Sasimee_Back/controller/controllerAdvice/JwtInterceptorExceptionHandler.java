@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@RestControllerAdvice(basePackageClasses = JwtAuthenticateInterceptor.class)
+@RestControllerAdvice(basePackageClasses = JwtAuthenticateInterceptor.class, basePackages = {"com.example.Sasimee_Back.Interceptor"})
 public class JwtInterceptorExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

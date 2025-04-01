@@ -35,12 +35,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(1)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/login", "/user/register", "/email/*",
-                                                "/user/reissue", "/api-docs", "/swagger/*");
+                                                "/user/reissue", "/swagger/*", "/swagger-ui/*", "/api-docs/*", "/api-docs", "/error");
         interceptorRegistry.addInterceptor(jwtAuthorizationInterceptor)
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/login", "/user/register", "/email/*",
-                                                "/user/reissue", "/api-docs", "/swagger/*");
+                                                "/user/reissue", "/swagger/*", "/swagger-ui/*", "/api-docs/*", "/api-docs", "/error");
     }
 
 }
