@@ -3,7 +3,6 @@ package com.example.Sasimee_Back.controller;
 import com.example.Sasimee_Back.argumentResolver.JwtAuthentication;
 import com.example.Sasimee_Back.authentication.User;
 import com.example.Sasimee_Back.service.ClickHistoryService;
-import com.example.Sasimee_Back.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
