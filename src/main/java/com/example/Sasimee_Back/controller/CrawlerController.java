@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/ai")
+@RequestMapping("/verify")
 @RequiredArgsConstructor
 @Tag(name = "구글폼 분석", description="구글폼 분석을 위한 api")
 public class CrawlerController {
     private final CrawlerService crawlerService;
 
     @Operation(summary = "구글폼 링크 검수", description = "Gemini를 기반으로 한 AI검수")
-    @GetMapping("/verify")
+    @GetMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "구글폼 분석 성공"),
             @ApiResponse(responseCode = "400", description = "구글폼 분석 실패")
