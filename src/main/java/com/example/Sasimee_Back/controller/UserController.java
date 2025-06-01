@@ -65,7 +65,6 @@ public class UserController {
         boolean isVerified = emailAuthService.verifyEmailAuthentication(registerRequest.getEmail());
         if (isVerified == false)
             return BaseResponse.toResponseEntity(UserResultCode.NOT_VERIFIED);
-
         userService.register(registerRequest);
         emailAuthService.deleteVerificatedEmailInfo(registerRequest.getEmail());
         return BaseResponse.toResponseEntity(UserResultCode.SUCCESS_REGISTER);
