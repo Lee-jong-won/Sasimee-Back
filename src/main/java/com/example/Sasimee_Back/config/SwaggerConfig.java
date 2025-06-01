@@ -20,14 +20,12 @@ import java.util.List;
 public class SwaggerConfig {
 
     //http://[server_ip]:8080/swagger-ui.html
-
     static {
         SpringDocUtils.getConfig().addAnnotationsToIgnore(JwtAuthentication.class);
     }
 
     @Bean
     public OpenAPI openAPI() {
-
         final Info info = new Info()
                 .title("Sasimee API")
                 .version("v1.0.0")

@@ -8,6 +8,7 @@ import com.example.Sasimee_Back.entity.User;
 import com.example.Sasimee_Back.entity.UserTag;
 import com.example.Sasimee_Back.exception.PasswordNotMatchException;
 import com.example.Sasimee_Back.exception.UserAlreadyExistsException;
+import com.example.Sasimee_Back.repository.LockRepository;
 import com.example.Sasimee_Back.repository.RefreshTokenRepository;
 import com.example.Sasimee_Back.repository.UserRepository;
 import com.example.Sasimee_Back.repository.UserTagRepository;
@@ -16,6 +17,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -35,26 +38,62 @@ public class UserService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserTagRepository userTagRepository;
+    private final LockRepository lockRepository;
 
     @Transactional
-    public void register(UserDTO.registerRequest registerRequest) {
-        Optional<User> userOptional = userRepository.findByEmail(registerRequest.getEmail());
+    public void registerFacade(UserDTO.registerRequest registerRequest){
+        try {
+            Long available = lockRepository.getLock("register");
+            if (available == 0) {
+                throw new RuntimeException("락을 획득하지 못했습니다");
+            }
+            register(registerRequest);
+        }
+        finally{
+            lockRepository.releaseLock("register");
+        }
+    }
 
-        if (userOptional.isPresent())
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void register(UserDTO.registerRequest registerRequest) {
+        if (userRepository.findFirstForUpdateByEmail(registerRequest.getEmail()).isPresent())
             throw new UserAlreadyExistsException("이미 해당 이메일로 가입된 계정이 존재합니다!");
 
         registerRequest.setPassword1(BCrypt.hashpw(registerRequest.getPassword1(), BCrypt.gensalt()));
         User user = UserDTO.registerRequest.toEntity(registerRequest);
-        user.addUserAuthority();
+        List<UserTag> tags = null;
 
-        List<UserTag> tags = registerRequest.getTags().stream()
-                .map(tagRequest -> userTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
-                        .orElseGet(() -> userTagRepository.save(new UserTag(tagRequest.getName(), tagRequest.getCategory(), user))))
-                .collect(Collectors.toList());
-        user.setTags(tags);
+        if(registerRequest.getTags() != null) {
+             tags = registerRequest.getTags().stream()
+                    .map(tagRequest -> userTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
+                            .orElseGet(() -> userTagRepository.save(new UserTag(tagRequest.getName(), tagRequest.getCategory(), user))))
+                    .collect(Collectors.toList());
+            user.setTags(tags);
+        }
 
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
     }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void register2(UserDTO.registerRequest registerRequest) {
+        if (userRepository.findFirstForUpdateByEmail(registerRequest.getEmail()).isPresent())
+            throw new UserAlreadyExistsException("이미 해당 이메일로 가입된 계정이 존재합니다!");
+
+        registerRequest.setPassword1(BCrypt.hashpw(registerRequest.getPassword1(), BCrypt.gensalt()));
+        User user = UserDTO.registerRequest.toEntity(registerRequest);
+        List<UserTag> tags = null;
+
+        if(registerRequest.getTags() != null) {
+            tags = registerRequest.getTags().stream()
+                    .map(tagRequest -> userTagRepository.findByNameAndCategory(tagRequest.getName(), tagRequest.getCategory())
+                            .orElseGet(() -> userTagRepository.save(new UserTag(tagRequest.getName(), tagRequest.getCategory(), user))))
+                    .collect(Collectors.toList());
+            user.setTags(tags);
+        }
+
+        userRepository.saveAndFlush(user);
+    }
+
 
     @Transactional
     public TokenDto login(String email, String password) {
