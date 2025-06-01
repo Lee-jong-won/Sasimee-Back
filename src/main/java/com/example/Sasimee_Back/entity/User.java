@@ -18,18 +18,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true, nullable = false)
+    //@Column(unique = true, nullable = false)
     private String email;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     @Setter
     private String encryptPassword;
 
-    //@Enumerated(EnumType.STRING) // Enum 값을 문자열로 저장
+    @Enumerated(EnumType.STRING) // Enum 값을 문자열로 저장
     //@Column(nullable = false)
-    //private Gender gender;
+    private Gender gender;
 
     @Setter
     private String name;
@@ -45,10 +42,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private List<UserTag> tags;
-
-    public void addUserAuthority(){
-        this.role = Role.ROLE_USER;
-    }
     public void setTags(List<UserTag> tags){
         this.tags = tags;
     }
