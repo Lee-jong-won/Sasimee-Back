@@ -30,6 +30,7 @@ jobs:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
           script: |
             echo "### Change directory to Sasimee-Back ###"
             cd /home/opc/Sasimee-Back
