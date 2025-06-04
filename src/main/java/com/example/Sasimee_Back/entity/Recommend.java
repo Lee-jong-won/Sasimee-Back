@@ -24,11 +24,11 @@ public class Recommend{
     private long id;
 
     @Column(nullable = false)
-    private long post_id;
+    private long postId;
 
     @Column(nullable = false)
-    private long similar_post_id;
+    private long similarPostId;
 
     @Column(nullable = false)
-    private float similarity_score;
+    private float similarityScore;
 }

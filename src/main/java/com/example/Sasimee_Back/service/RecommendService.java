@@ -2,7 +2,7 @@ package com.example.Sasimee_Back.service;
 
 import org.springframework.stereotype.Service;
 
-import com.example.Sasimee_Back.entity.Recommendation;
+import com.example.Sasimee_Back.entity.Recommend;
 import com.example.Sasimee_Back.repository.RecommendationRepository;
 
 import jakarta.transaction.Transactional;
@@ -18,14 +18,14 @@ public class RecommendService {
         long count = recommendationRepository.countByPostId(postId);
 
         if(count >= 3){
-            Recommendation oldest = recommendationRepository.findTopByPostIdOrderByIdAsc(postId);
+            Recommend oldest = recommendationRepository.findTopByPostIdOrderByIdAsc(postId);
             recommendationRepository.delete(oldest);
         }
 
-        Recommendation newRecommendation = Recommendation.builder()
-            .postId(postId)
-            .recommendId(recommendationId)
-            .similarity(similarity)
+        Recommend newRecommendation = Recommend.builder()
+                .postId(postId)
+                .similarPostId(recommendationId)
+                .similarityScore(similarity)
             .build();
         
         recommendationRepository.save(newRecommendation);
