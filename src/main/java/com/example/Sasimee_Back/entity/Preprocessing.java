@@ -11,24 +11,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Recommendation{
+public class Preprocessing{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)
-    private long postId;
+    private long post_id;
 
     @Column(nullable = false)
-    private long recommendId;
+    private long text;
 
     @Column(nullable = false)
-    private float similarity;
+    private long nouns;
 }
