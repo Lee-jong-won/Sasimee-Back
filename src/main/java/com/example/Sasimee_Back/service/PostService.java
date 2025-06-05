@@ -1,22 +1,29 @@
 package com.example.Sasimee_Back.service;
 
 
-import com.example.Sasimee_Back.dto.PostDTO;
-import com.example.Sasimee_Back.dto.TagDTO;
-import com.example.Sasimee_Back.entity.*;
-import com.example.Sasimee_Back.repository.ClearHistoryRepository;
-import com.example.Sasimee_Back.repository.PostRepository;
-import com.example.Sasimee_Back.repository.PostTagRepository;
-import com.example.Sasimee_Back.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.example.Sasimee_Back.dto.PostDTO;
+import com.example.Sasimee_Back.dto.TagDTO;
+import com.example.Sasimee_Back.entity.ClearHistory;
+import com.example.Sasimee_Back.entity.Post;
+import com.example.Sasimee_Back.entity.PostTag;
+import com.example.Sasimee_Back.entity.PostType;
+import com.example.Sasimee_Back.entity.User;
+import com.example.Sasimee_Back.repository.ClearHistoryRepository;
+import com.example.Sasimee_Back.repository.PostRepository;
+import com.example.Sasimee_Back.repository.PostTagRepository;
+import com.example.Sasimee_Back.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 
 @Service
@@ -170,6 +177,31 @@ public class PostService {
                             .postType(post.getType())
                             .tagName(tagName)
                             .build();
+                })
+                .collect(Collectors.toList());
+
+        return PostDTO.getAllPostResponse.builder().posts(postSummaries).build();
+    }
+
+    public PostDTO.getAllPostResponse getPostByIds(List<Long> post_ids){
+        List<Post> posts = new ArrayList<>();
+        for(int i = 0; i < post_ids.size(); i++){
+                postRepository.findById(post_ids.get(i))
+                        .ifPresent(posts::add);
+        }
+
+        List<PostDTO.getAllPostResponse.PostSummary> postSummaries = posts.stream()
+                .map(post -> {
+                        List<String> tagNames = post.getTags().stream()
+                                .map(PostTag::getName)
+                                .collect(Collectors.toList());
+
+                        return PostDTO.getAllPostResponse.PostSummary.builder()
+                                .id(post.getId())
+                                .title(post.getTitle())
+                                .postType(post.getType())
+                                .tagName(tagNames)
+                                .build();
                 })
                 .collect(Collectors.toList());
 

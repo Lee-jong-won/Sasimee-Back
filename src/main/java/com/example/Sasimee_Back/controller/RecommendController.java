@@ -1,30 +1,36 @@
 package com.example.Sasimee_Back.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.Sasimee_Back.argumentResolver.JwtAuthentication;
 import com.example.Sasimee_Back.authentication.User;
 import com.example.Sasimee_Back.dto.PostDTO;
 import com.example.Sasimee_Back.entity.PostType;
 import com.example.Sasimee_Back.service.ClickHistoryService;
 import com.example.Sasimee_Back.service.PostService;
+import com.example.Sasimee_Back.service.RecommendService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
 @RequestMapping("/offers")
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "추천 시스템", description = "추천 시스템 관련 API 입니다.")
-public class RecommendationController {
+public class RecommendController {
 
     private final ClickHistoryService clickHistoryService;
+    private final RecommendService recommendService;
     private final PostService postService;
 
     @Operation(summary = "설문형 게시글 추천", description = "게시글 클릭 기반으로 추천을 진행합니다.")
@@ -64,4 +70,18 @@ public class RecommendationController {
             return ResponseEntity.status(400).body("수행형 추천 게시글을 가져올 수 없었습니다." + e.getMessage());
         }
     }
+
+    @User
+    @GetMapping("/model")
+    public ResponseEntity<Object> modelRecommendation(@RequestParam String email) {
+        List<Long> recommend_ids = recommendService.getRecommendByRecent(email);
+        try{
+            PostDTO.getAllPostResponse posts = postService.getPostByIds(recommend_ids);
+            return ResponseEntity.ok(posts);
+        }catch(Exception e){
+            return ResponseEntity.status(400).body("모델 추천 게시글을 불러올 수 없었습니다." + e.getMessage());
+        }
+
+    }
+    
 }
