@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -54,9 +55,9 @@ public class UserService {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRES_NEW)
     public void register(UserDTO.registerRequest registerRequest) {
-        if (userRepository.findFirstForUpdateByEmail(registerRequest.getEmail()).isPresent())
+        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent())
             throw new UserAlreadyExistsException("이미 해당 이메일로 가입된 계정이 존재합니다!");
 
         registerRequest.setPassword1(BCrypt.hashpw(registerRequest.getPassword1(), BCrypt.gensalt()));
@@ -74,10 +75,12 @@ public class UserService {
         userRepository.saveAndFlush(user);
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void register2(UserDTO.registerRequest registerRequest) {
-        if (userRepository.findFirstForUpdateByEmail(registerRequest.getEmail()).isPresent())
-            throw new UserAlreadyExistsException("이미 해당 이메일로 가입된 계정이 존재합니다!");
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void register3(UserDTO.registerRequest registerRequest) {
+
+        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent())
+            throw new RuntimeException("이미 해당 이메일로 가입된 계정이 존재합니다!");
 
         registerRequest.setPassword1(BCrypt.hashpw(registerRequest.getPassword1(), BCrypt.gensalt()));
         User user = UserDTO.registerRequest.toEntity(registerRequest);
@@ -91,7 +94,11 @@ public class UserService {
             user.setTags(tags);
         }
 
-        userRepository.saveAndFlush(user);
+        try {
+            userRepository.save(user);
+        }catch(DataIntegrityViolationException e){
+            throw new RuntimeException("이미 해당 이메일로 가입된 계정이 존재합니다2!");
+        }
     }
 
 
