@@ -50,7 +50,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ResponseEntity<BaseResponse<Void>> runtimeExceptionHandler(RuntimeException e){
-        log.error("message={}", e);
+        log.error("message={}", e.getMessage());
         return BaseResponse.toResponseEntity(UserResultCode.INTERNAL_SERVER_ERROR);
     }
 
@@ -62,11 +62,11 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<BaseResponse<Void>> register(
             @RequestBody UserDTO.registerRequest registerRequest) {
-        boolean isVerified = emailAuthService.verifyEmailAuthentication(registerRequest.getEmail());
+       /* boolean isVerified = emailAuthService.verifyEmailAuthentication(registerRequest.getEmail());
         if (isVerified == false)
-            return BaseResponse.toResponseEntity(UserResultCode.NOT_VERIFIED);
-        userService.register(registerRequest);
-        emailAuthService.deleteVerificatedEmailInfo(registerRequest.getEmail());
+            return BaseResponse.toResponseEntity(UserResultCode.NOT_VERIFIED);*/
+        userService.register3(registerRequest);
+        //emailAuthService.deleteVerificatedEmailInfo(registerRequest.getEmail());
         return BaseResponse.toResponseEntity(UserResultCode.SUCCESS_REGISTER);
     }
 

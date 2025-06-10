@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface LockRepository extends JpaRepository<User, Long> {
 
-    @Query(value = "select get_lock(:key, 50)", nativeQuery = true)
+    @Query(value = "select get_lock(:key, 300)", nativeQuery = true)
     Long getLock(@Param("key") String key);
 
     @Query(value = "select release_lock(:key)", nativeQuery = true)
