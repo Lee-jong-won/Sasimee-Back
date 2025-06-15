@@ -70,7 +70,7 @@ public class UserController {
         return BaseResponse.toResponseEntity(UserResultCode.SUCCESS_REGISTER);
     }
 
-    @PostMapping("/registerFacade")
+    @PostMapping("/register/facade")
     public ResponseEntity<BaseResponse<Void>> registerFacade(
             @RequestBody UserDTO.registerRequest registerRequest) {
        /* boolean isVerified = emailAuthService.verifyEmailAuthentication(registerRequest.getEmail());
