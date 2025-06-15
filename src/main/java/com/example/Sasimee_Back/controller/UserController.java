@@ -65,7 +65,18 @@ public class UserController {
        /* boolean isVerified = emailAuthService.verifyEmailAuthentication(registerRequest.getEmail());
         if (isVerified == false)
             return BaseResponse.toResponseEntity(UserResultCode.NOT_VERIFIED);*/
-        userService.register3(registerRequest);
+        userService.register(registerRequest);
+        //emailAuthService.deleteVerificatedEmailInfo(registerRequest.getEmail());
+        return BaseResponse.toResponseEntity(UserResultCode.SUCCESS_REGISTER);
+    }
+
+    @PostMapping("/registerFacade")
+    public ResponseEntity<BaseResponse<Void>> registerFacade(
+            @RequestBody UserDTO.registerRequest registerRequest) {
+       /* boolean isVerified = emailAuthService.verifyEmailAuthentication(registerRequest.getEmail());
+        if (isVerified == false)
+            return BaseResponse.toResponseEntity(UserResultCode.NOT_VERIFIED);*/
+        userService.registerFacade(registerRequest);
         //emailAuthService.deleteVerificatedEmailInfo(registerRequest.getEmail());
         return BaseResponse.toResponseEntity(UserResultCode.SUCCESS_REGISTER);
     }
